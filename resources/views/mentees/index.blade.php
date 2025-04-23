@@ -282,7 +282,7 @@
                                 <input type="hidden" name="student_id" value="{{ $student->id }}">
                                 <select name="mentor_id" class="form-select mentor-select" required>
                                     <option value="">Choose Mentor</option>
-                                    @foreach($faculties as $faculty)
+                                    @foreach($faculties->where('school_id', $student->school_id) as $faculty)
                                         <option value="{{ $faculty->id }}">{{ $faculty->fname }} {{ $faculty->lname }}</option>
                                     @endforeach
                                 </select>
@@ -322,9 +322,13 @@
                             <td>
                                 <select name="mentor_id" class="form-select mentor-select" required>
                                     <option value="">Select Mentor</option>
-                                    @foreach($faculties as $faculty)
-                                        <option value="{{ $faculty->id }}">{{ $faculty->fname }} {{ $faculty->lname }}</option>
+                                    @foreach($faculties->where('school_id', $student->school_id) as $faculty)
+                                        <option value="{{ $faculty->id }}"
+                                            {{ optional(optional($student->mentee)->mentor)->faculty_id == $faculty->id ? 'selected' : '' }}>
+                                            {{ $faculty->fname }} {{ $faculty->lname }}
+                                        </option>
                                     @endforeach
+
                                 </select>
                             </td>
                         </tr>
@@ -363,6 +367,16 @@
         confirmButtonText: 'OK'
     });
     @endif
+
+    @if($errors->has('mentor_id'))
+        Swal.fire({
+            title: 'Error!',
+            text: '{{ $errors->first("mentor_id") }}',
+            icon: 'error',
+            confirmButtonColor: '#d33'
+        });
+@endif
+
 </script>
 </body>
 </html>

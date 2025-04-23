@@ -7,6 +7,11 @@ use App\Models\Admin;
 use App\Models\Student;
 use App\Models\Faculty;
 use App\Models\Mentee;
+use App\Models\Gender;
+use App\Models\Batch;
+use App\Models\Semester;
+use App\Models\School;
+use App\Models\Degree;
 use App\Models\Mentor;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -34,9 +39,8 @@ class AdminController extends Controller
         ]);
 
         $admin = Admin::where('email', $request->email)
-                      ->where('password', $request->password) // plain text check
+                      ->where('password', $request->password)
                       ->first();
-
         if ($admin) {
             session(['admin_logged_in' => true]);
             Auth::guard('admin')->login($admin);
@@ -48,10 +52,7 @@ class AdminController extends Controller
     }
 
 
-
-
-
-
+//------------------------------------------Dash-Board-------------------------------------//
     public function dashboard()
     {
         if (!session('admin_logged_in')) {
@@ -61,85 +62,126 @@ class AdminController extends Controller
         return view('admin.dashboard');
     }
 
-    public function studentsList()
+//---------------------------------------------All Students List----------------------------------------//
+    
+    public function studentsList(Request $request)
     {
-        $students = Student::with(['academic', 'batch', 'degree', 'gender', 'school', 'semester', 'country', 'state', 'district'])->get();
-        return view('students.index', compact('students'));
+        $query = Student::with(['academic', 'batch', 'degree', 'gender', 'school', 'semester', 'country', 'state', 'district']);
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('registration_no', 'like', "%$search%")
+                ->orWhere('fname', 'like', "%$search%")
+                ->orWhere('lname', 'like', "%$search%")
+                ->orWhere('uid', 'like', "%$search%")
+                ->orWhere('email', 'like', "%$search%")
+                ->orWhere('mobile', 'like', "%$search%");
+            });
+        }
+
+        if ($request->filled('gender')) {
+            $query->where('gender_id', $request->gender);
+        }
+
+        if ($request->filled('batch')) {
+            $query->where('batch_id', $request->batch);
+        }
+
+        if ($request->filled('semester')) {
+            $query->where('semester_id', $request->semester);
+        }
+
+        if ($request->filled('school')) {
+            $query->where('school_id', $request->school);
+        }
+
+        if ($request->filled('degree')) {
+            $query->where('degree_id', $request->degree);
+        }
+
+        $students = $query->paginate(3);
+
+        $genders = Gender::all();
+        $batches = Batch::all();
+        $semesters = Semester::all();
+        $schools = School::all();
+        $degrees = Degree::all();
+
+        return view('students.index', compact('students', 'genders', 'batches', 'semesters', 'schools', 'degrees'));
     }
 
+//----------------------------------------menteeslist--------------------------------------------------//
     public function menteesList()
-{
-    // Get all students with SGPA below 6 and load relationships
-    $students = Student::with(['degree', 'school', 'mentee'])
-                ->where('sgpa', '<', 6)
-                ->get();
+    {
+        $students = Student::with(['degree', 'school', 'mentee'])
+                    ->where('sgpa', '<', 6)
+                    ->get();
 
-    $faculties = Faculty::all();
+        $faculties = Faculty::all();
 
-    return view('mentees.index', compact('students', 'faculties'));
-}
+        return view('mentees.index', compact('students', 'faculties'));
+    }
 
-
+//------------------------------------------AsignMentor---------------------------------------------//
     public function assignMentor(Request $request)
-{
-    $request->validate([
-        'student_id' => 'required|exists:students,id',
-        'mentor_id'  => 'required|exists:faculties,id',
-    ]);
-
-    $student = Student::findOrFail($request->student_id);
-    $faculty = Faculty::findOrFail($request->mentor_id);
-
-    // Check if mentor already exists in mentors table
-    $mentor = Mentor::where('faculty_id', $faculty->id)->first();
-
-    if (!$mentor) {
-        // Create new mentor if not present
-        $mentor = Mentor::create([
-            'faculty_id' => $faculty->id,
-            'email'  => $faculty->email,
-            'password'   => hash('sha256', $faculty->email),
-        ]);
-    }
-
-    // Check if mentee already exists for this student
-    $mentee = Mentee::where('student_id', $student->id)->first();
-
-    if ($mentee) {
-        // Change mentor (update)
-        $mentee->mentor_id = $mentor->id;
-        $mentee->save();
-
-        Mail::to($student->email)->send(new MentorChangedForStudentMail($student, $mentor));
-        Mail::to($faculty->email)->send(new MenteeAssignedToMentorMail($student, $mentor));
-
-        return redirect()->route('mentees.index')->with('success', 'Mentor changed successfully!');
-    } else {
-        // Assign new mentor (create)
-        Mentee::create([
-            'student_id' => $student->id,
-            'mentor_id'  => $mentor->id,
-            'email'  => $student->email,
-            'password'   => hash('sha256', $student->email),
+    {
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'mentor_id'  => 'required|exists:faculties,id',
         ]);
 
-        Mail::to($student->email)->send(new MentorAssignedToStudentMail($student, $mentor));
-        Mail::to($faculty->email)->send(new MenteeAssignedToMentorMail($student, $mentor));
+        $student = Student::findOrFail($request->student_id);
+        $faculty = Faculty::findOrFail($request->mentor_id);
 
-        return redirect()->route('mentees.index')->with('success', 'Mentor assigned successfully!');
+        $mentor = Mentor::where('faculty_id', $faculty->id)->first();
+
+        if (!$mentor) {
+            $mentor = Mentor::create([
+                'faculty_id' => $faculty->id,
+                'email'  => $faculty->email,
+                'password'   => hash('sha256', $faculty->email),
+            ]);
+        }
+
+        $mentee = Mentee::where('student_id', $student->id)->first();
+        if ($mentee) {
+
+            if ($mentee->mentor_id == $mentor->id) {
+                return redirect()->back()->withErrors(['mentor_id' => 'New mentor cannot be the same as the current mentor.']);
+            }
+
+            $mentee->mentor_id = $mentor->id;
+            $mentee->save();
+
+            Mail::to($student->email)->send(new MentorChangedForStudentMail($student, $mentor));
+            Mail::to($faculty->email)->send(new MenteeAssignedToMentorMail($student, $mentor));
+
+            return redirect()->route('mentees.index')->with('success', 'Mentor changed successfully!');
+        } else {
+            Mentee::create([
+                'student_id' => $student->id,
+                'mentor_id'  => $mentor->id,
+                'email'  => $student->email,
+                'password'   => hash('sha256', $student->email),
+            ]);
+
+            Mail::to($student->email)->send(new MentorAssignedToStudentMail($student, $mentor));
+            Mail::to($faculty->email)->send(new MenteeAssignedToMentorMail($student, $mentor));
+            return redirect()->route('mentees.index')->with('success', 'Mentor assigned successfully!');
+        }
     }
-}
 
+//----------------------------------------------MentorMentee list--------------------------------------//
 
+    public function mentorMenteeList()
+    {
 
-public function mentorMenteeList()
-{
-    // Eager load related faculty and mentees, and for each mentee, load the student
-    $mentors = Mentor::with(['faculty', 'mentees.student'])->get();
+        $mentors = Mentor::with(['faculty', 'mentees.student'])->get();
 
-    return view('mentor-mentees.index', compact('mentors'));
+        return view('mentor-mentees.index', compact('mentors'));
 
-}
+    }
 
     public function logout(Request $request)
     {

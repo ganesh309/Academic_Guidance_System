@@ -18,7 +18,7 @@
         }
 
         body {
-            background: #87CEEB; /* Sky blue base for nature theme */
+            background: #87CEEB;
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
@@ -26,7 +26,6 @@
             position: relative;
         }
 
-        /* Nature Background Animation */
         .nature-bg {
             position: fixed;
             top: 0;
@@ -45,7 +44,6 @@
             100% { background-position: 200px 200px; }
         }
 
-        /* Falling Leaves Animation */
         .leaves-container {
             position: fixed;
             top: 0;
@@ -92,8 +90,7 @@
     position: relative;
     z-index: 1;
 
-    /* Add this line: */
-    margin-left: 270px; /* 250px sidebar + 20px spacing */
+    margin-left: 270px;
 }
 .mt-5 {
     margin-left: 300px;
@@ -226,9 +223,71 @@
 <body>
     <div class="nature-bg"></div>
     <div class="leaves-container" id="leaves-container"></div>
-
-    <div class="container mt-5" style="margin-left: 260px;">
+    <div class="mb-1" style="margin-left: 260px;">
         <h2 class="mb-4">Student List</h2>
+    <div>
+    <div class="container mt-5" style="">
+      
+        <form method="GET" action="{{ route('students.index') }}" class="mb-4">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by Name, UID, Email, etc.">
+        </div>
+
+        <div class="col-md-2">
+            <select name="gender" class="form-select">
+                <option value="">All Genders</option>
+                @foreach($genders as $gender)
+                    <option value="{{ $gender->id }}" {{ request('gender') == $gender->id ? 'selected' : '' }}>{{ $gender->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select name="batch" class="form-select">
+                <option value="">All Batches</option>
+                @foreach($batches as $batch)
+                    <option value="{{ $batch->id }}" {{ request('batch') == $batch->id ? 'selected' : '' }}>{{ $batch->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select name="semester" class="form-select">
+                <option value="">All Semesters</option>
+                @foreach($semesters as $semester)
+                    <option value="{{ $semester->id }}" {{ request('semester') == $semester->id ? 'selected' : '' }}>{{ $semester->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select name="school" class="form-select">
+                <option value="">All Schools</option>
+                @foreach($schools as $school)
+                    <option value="{{ $school->id }}" {{ request('school') == $school->id ? 'selected' : '' }}>{{ $school->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select name="degree" class="form-select">
+                <option value="">All Degrees</option>
+                @foreach($degrees as $degree)
+                    <option value="{{ $degree->id }}" {{ request('degree') == $degree->id ? 'selected' : '' }}>{{ $degree->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+            <a href="{{ route('students.index') }}" class="btn btn-secondary ms-2">Reset</a>
+
+        </div>
+        
+    </div>
+</form>
+
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="table-dark">
@@ -272,13 +331,15 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-center mt-3">
+                    {!! $students->links('pagination::bootstrap-5') !!}
+                    </div>
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const leavesContainer = document.getElementById('leaves-container');
-            const leafCount = 30; // Increased number of falling leaves for a denser effect
+            const leafCount = 30;
 
             for (let i = 0; i < leafCount; i++) {
                 createLeaf();
@@ -289,9 +350,9 @@
                 leaf.className = 'leaf';
 
                 const startX = Math.random() * window.innerWidth;
-                const duration = Math.random() * 10 + 5; // Between 5s and 15s
+                const duration = Math.random() * 10 + 5;
                 const delay = Math.random() * 5;
-                const size = Math.random() * 20 + 10; // Random size between 10px and 30px
+                const size = Math.random() * 20 + 10;
 
                 leaf.style.left = `${startX}px`;
                 leaf.style.animationDuration = `${duration}s`;
@@ -302,7 +363,6 @@
 
                 leavesContainer.appendChild(leaf);
 
-                // Remove and recreate leaf after animation ends
                 leaf.addEventListener('animationend', () => {
                     leaf.remove();
                     createLeaf();
