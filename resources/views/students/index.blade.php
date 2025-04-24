@@ -79,22 +79,22 @@
         }
 
         .container {
-    margin-top: 5rem;
-    padding: 2rem;
-    background: var(--glass-bg);
-    border-radius: 20px;
-    box-shadow: var(--shadow-soft);
-    backdrop-filter: blur(10px);
-    animation: fadeIn 1s ease-out, scaleUp 1.5s ease-in-out;
-    max-width: 90%;
-    position: relative;
-    z-index: 1;
+            margin-top: 5rem;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1s ease-out, scaleUp 1.5s ease-in-out;
+            max-width: 90%;
+            position: relative;
+            z-index: 1;
 
-    margin-left: 270px;
-}
-.mt-5 {
-    margin-left: 300px;
-}
+            margin-left: 270px;
+        }
+        .mt-5 {
+            margin-left: 300px;
+        }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -219,74 +219,83 @@
         }
     </style>
 </head>
-@include('layouts.sidebar')
+
 <body>
+@include('layouts.sidebar')
     <div class="nature-bg"></div>
     <div class="leaves-container" id="leaves-container"></div>
     <div class="mb-1" style="margin-left: 260px;">
         <h2 class="mb-4">Student List</h2>
-    <div>
-    <div class="container mt-5" style="">
-      
-        <form method="GET" action="{{ route('students.index') }}" class="mb-4">
-    <div class="row g-3">
-        <div class="col-md-4">
-            <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by Name, UID, Email, etc.">
-        </div>
-
-        <div class="col-md-2">
-            <select name="gender" class="form-select">
-                <option value="">All Genders</option>
-                @foreach($genders as $gender)
-                    <option value="{{ $gender->id }}" {{ request('gender') == $gender->id ? 'selected' : '' }}>{{ $gender->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <select name="batch" class="form-select">
-                <option value="">All Batches</option>
-                @foreach($batches as $batch)
-                    <option value="{{ $batch->id }}" {{ request('batch') == $batch->id ? 'selected' : '' }}>{{ $batch->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <select name="semester" class="form-select">
-                <option value="">All Semesters</option>
-                @foreach($semesters as $semester)
-                    <option value="{{ $semester->id }}" {{ request('semester') == $semester->id ? 'selected' : '' }}>{{ $semester->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <select name="school" class="form-select">
-                <option value="">All Schools</option>
-                @foreach($schools as $school)
-                    <option value="{{ $school->id }}" {{ request('school') == $school->id ? 'selected' : '' }}>{{ $school->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <select name="degree" class="form-select">
-                <option value="">All Degrees</option>
-                @foreach($degrees as $degree)
-                    <option value="{{ $degree->id }}" {{ request('degree') == $degree->id ? 'selected' : '' }}>{{ $degree->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Search</button>
-            <a href="{{ route('students.index') }}" class="btn btn-secondary ms-2">Reset</a>
-
-        </div>
-        
     </div>
-</form>
+
+    <div class="container mt-5" style="margin-left: 260px;">
+        <form method="GET" action="{{ route('students.index') }}" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by Name, UID, Email, etc.">
+                </div>
+
+                <!-- Keep the filters -->
+                <div class="col-md-2">
+                    <select name="gender" class="form-select">
+                        <option value="">All Genders</option>
+                        @foreach($genders as $gender)
+                            <option value="{{ $gender->id }}" {{ request('gender') == $gender->id ? 'selected' : '' }}>{{ $gender->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select name="batch" class="form-select">
+                        <option value="">All Batches</option>
+                        @foreach($batches as $batch)
+                            <option value="{{ $batch->id }}" {{ request('batch') == $batch->id ? 'selected' : '' }}>{{ $batch->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select name="semester" class="form-select">
+                        <option value="">All Semesters</option>
+                        @foreach($semesters as $semester)
+                            <option value="{{ $semester->id }}" {{ request('semester') == $semester->id ? 'selected' : '' }}>{{ $semester->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select name="school" class="form-select">
+                        <option value="">All Schools</option>
+                        @foreach($schools as $school)
+                            <option value="{{ $school->id }}" {{ request('school') == $school->id ? 'selected' : '' }}>{{ $school->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select name="degree" class="form-select">
+                        <option value="">All Degrees</option>
+                        @foreach($degrees as $degree)
+                            <option value="{{ $degree->id }}" {{ request('degree') == $degree->id ? 'selected' : '' }}>{{ $degree->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Records per page select -->
+                <div class="col-md-2">
+                    <select name="per_page" class="form-select">
+                        @foreach([5, 10, 25, 50, 100] as $perPageOption)
+                            <option value="{{ $perPageOption }}" {{ request('per_page', 5) == $perPageOption ? 'selected' : '' }}>{{ $perPageOption }} per page</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-flex">
+                    <button type="submit" class="btn btn-primary w-100 me-2">Search</button>
+                    <a href="{{ route('students.index') }}" class="btn btn-secondary">Reset</a>
+                </div>
+            </div>
+        </form>
 
         <div class="table-responsive">
             <table class="table table-bordered">
@@ -304,39 +313,36 @@
                         <th>Gender</th>
                         <th>School</th>
                         <th>Degree</th>
-                        <!-- <th>Country</th>
-                        <th>State</th>
-                        <th>District</th> -->
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($students as $student)
-                    <tr style="animation-delay: {{ $loop->index * 0.1 }}s;">
-                        <td>{{ $student->id }}</td>
-                        <td>{{ $student->registration_no }}</td>
-                        <td>{{ $student->fname }} {{ $student->lname }}</td>
-                        <td>{{ $student->uid }}</td>
-                        <td>{{ $student->email }}</td>
-                        <td>{{ $student->mobile }}</td>
-                        <td>{{ optional($student->batch)->name ?? 'N/A' }}</td>
-                        <td>{{ optional($student->semester)->name ?? 'N/A' }}</td>
-                        <td>{{ $student->sgpa ?? 'N/A' }}</td>
-                        <td>{{ optional($student->gender)->name ?? 'N/A' }}</td>
-                        <td>{{ optional($student->school)->name ?? 'N/A' }}</td>
-                        <td>{{ optional($student->degree)->name ?? 'N/A' }}</td>
-                        <!-- <td>{{ optional($student->country)->name ?? 'N/A' }}</td>
-                        <td>{{ optional($student->state)->name ?? 'N/A' }}</td>
-                        <td>{{ optional($student->district)->name ?? 'N/A' }}</td> -->
-                    </tr>
+                        <tr style="animation-delay: {{ $loop->index * 0.1 }}s;">
+                            <td>{{ $student->id }}</td>
+                            <td>{{ $student->registration_no }}</td>
+                            <td>{{ $student->fname }} {{ $student->lname }}</td>
+                            <td>{{ $student->uid }}</td>
+                            <td>{{ $student->email }}</td>
+                            <td>{{ $student->mobile }}</td>
+                            <td>{{ optional($student->batch)->name ?? 'N/A' }}</td>
+                            <td>{{ optional($student->semester)->name ?? 'N/A' }}</td>
+                            <td>{{ $student->sgpa ?? 'N/A' }}</td>
+                            <td>{{ optional($student->gender)->name ?? 'N/A' }}</td>
+                            <td>{{ optional($student->school)->name ?? 'N/A' }}</td>
+                            <td>{{ optional($student->degree)->name ?? 'N/A' }}</td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
+
             <div class="d-flex justify-content-center mt-3">
-                    {!! $students->links('pagination::bootstrap-5') !!}
-                    </div>
+                {!! $students->appends(request()->query())->links('pagination::bootstrap-5') !!}
+            </div>
         </div>
     </div>
+
     <script>
+        // Floating leaf animation (unchanged)
         document.addEventListener('DOMContentLoaded', function() {
             const leavesContainer = document.getElementById('leaves-container');
             const leafCount = 30;

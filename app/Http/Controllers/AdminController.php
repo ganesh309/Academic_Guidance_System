@@ -100,7 +100,10 @@ class AdminController extends Controller
             $query->where('degree_id', $request->degree);
         }
 
-        $students = $query->paginate(3);
+        
+        $perPage = $request->input('per_page', 5);
+        $students = $query->paginate($perPage)->withQueryString();
+
 
         $genders = Gender::all();
         $batches = Batch::all();
