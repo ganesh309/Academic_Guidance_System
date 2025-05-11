@@ -62,4 +62,11 @@ class Student extends Model
     return $this->hasOne(Mentee::class);
 }
 
+
+public function attendances()
+{
+    return $this->hasMany(Attendance::class);
+}
+
+
 }

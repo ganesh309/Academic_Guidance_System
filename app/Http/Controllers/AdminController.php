@@ -13,6 +13,9 @@ use App\Models\Semester;
 use App\Models\School;
 use App\Models\Degree;
 use App\Models\Mentor;
+use App\Models\Attendance;
+use App\Models\Subject;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -112,6 +115,57 @@ class AdminController extends Controller
         $degrees = Degree::all();
 
         return view('students.index', compact('students', 'genders', 'batches', 'semesters', 'schools', 'degrees'));
+    }
+
+
+    public function attendanceChart(Student $student)
+    {
+        // Fetch monthly attendance (count of present days)
+        $monthlyAttendance = Attendance::selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total')
+            ->where('student_id', $student->id)
+            ->where('attendance', true) // Count only present days
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $monthly = [];
+        $drilldown = [];
+
+        foreach ($monthlyAttendance as $record) {
+            $monthName = Carbon::createFromFormat('Y-m', $record->month)->format('F Y');
+
+            // Fetch subject-wise attendance for this month
+            $subjects = Attendance::select('subjects.name', DB::raw('COUNT(*) as total'))
+                ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
+                ->where('attendances.student_id', $student->id)
+                ->where('attendances.attendance', true)
+                ->whereRaw('DATE_FORMAT(attendances.date, "%Y-%m") = ?', [$record->month])
+                ->groupBy('subjects.name')
+                ->pluck('total', 'subjects.name')
+                ->toArray();
+
+            $drillData = [];
+            foreach ($subjects as $subject => $total) {
+                $drillData[] = [$subject, $total];
+            }
+
+            $monthly[] = [
+                'name' => $monthName,
+                'y' => $record->total,
+                'drilldown' => $record->month
+            ];
+
+            $drilldown[] = [
+                'id' => $record->month,
+                'name' => $monthName . ' Subjects',
+                'data' => $drillData
+            ];
+        }
+
+        return response()->json([
+            'monthly' => $monthly,
+            'drilldown' => $drilldown
+        ]);
     }
 
 //----------------------------------------menteeslist--------------------------------------------------//

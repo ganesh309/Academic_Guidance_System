@@ -19,6 +19,9 @@ Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.logi
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
 Route::get('/students-list', [AdminController::class, 'studentsList'])->name('students.index');
+Route::get('/students/{student}/attendance-chart', [AdminController::class, 'attendanceChart']);
+
+
 
 // Mentees List Route
 Route::get('/mentees-list', [AdminController::class, 'menteesList'])->name('mentees.index');

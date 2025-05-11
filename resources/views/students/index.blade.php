@@ -89,9 +89,9 @@
             max-width: 90%;
             position: relative;
             z-index: 1;
-
             margin-left: 270px;
         }
+
         .mt-5 {
             margin-left: 300px;
         }
@@ -217,11 +217,76 @@
             background: var(--secondary-accent);
             color: white;
         }
+
+        .student-name {
+            cursor: pointer;
+            color: var(--primary-accent);
+            text-decoration: underline;
+        }
+
+        .student-name:hover {
+            color: var(--secondary-accent);
+        }
+
+        /* Modal styles */
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
+            color: white;
+            border-radius: 15px 15px 0 0;
+            border-bottom: none;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        /* Highcharts container */
+        #attendanceChart {
+            width: 100%;
+            height: 500px;
+            margin: 0 auto;
+        }
+
+        .highcharts-background {
+            fill: transparent;
+        }
+
+        .highcharts-container {
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        .highcharts-title {
+            font-family: 'Playfair Display', serif !important;
+            font-weight: 700 !important;
+        }
+
+        .modal {
+    z-index: 1055; /* Ensure it's above the backdrop */
+}
+.modal-backdrop {
+    --bs-backdrop-zindex: 0;
+}
+
+#attendanceChart {
+    position: relative;
+    z-index: 1060; /* Above modal content */
+}
+
     </style>
 </head>
-
 <body>
-@include('layouts.sidebar')
+    @include('layouts.sidebar')
     <div class="nature-bg"></div>
     <div class="leaves-container" id="leaves-container"></div>
     <div class="mb-1" style="margin-left: 260px;">
@@ -234,8 +299,6 @@
                 <div class="col-md-4">
                     <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by Name, UID, Email, etc.">
                 </div>
-
-                <!-- Keep the filters -->
                 <div class="col-md-2">
                     <select name="gender" class="form-select">
                         <option value="">All Genders</option>
@@ -244,7 +307,6 @@
                         @endforeach
                     </select>
                 </div>
-
                 <div class="col-md-2">
                     <select name="batch" class="form-select">
                         <option value="">All Batches</option>
@@ -253,7 +315,6 @@
                         @endforeach
                     </select>
                 </div>
-
                 <div class="col-md-2">
                     <select name="semester" class="form-select">
                         <option value="">All Semesters</option>
@@ -262,7 +323,6 @@
                         @endforeach
                     </select>
                 </div>
-
                 <div class="col-md-2">
                     <select name="school" class="form-select">
                         <option value="">All Schools</option>
@@ -271,7 +331,6 @@
                         @endforeach
                     </select>
                 </div>
-
                 <div class="col-md-2">
                     <select name="degree" class="form-select">
                         <option value="">All Degrees</option>
@@ -280,8 +339,6 @@
                         @endforeach
                     </select>
                 </div>
-
-                <!-- Records per page select -->
                 <div class="col-md-2">
                     <select name="per_page" class="form-select">
                         @foreach([5, 10, 25, 50, 100] as $perPageOption)
@@ -289,7 +346,6 @@
                         @endforeach
                     </select>
                 </div>
-
                 <div class="col-md-2 d-flex">
                     <button type="submit" class="btn btn-primary w-100 me-2">Search</button>
                     <a href="{{ route('students.index') }}" class="btn btn-secondary">Reset</a>
@@ -320,7 +376,9 @@
                         <tr style="animation-delay: {{ $loop->index * 0.1 }}s;">
                             <td>{{ $student->id }}</td>
                             <td>{{ $student->registration_no }}</td>
-                            <td>{{ $student->fname }} {{ $student->lname }}</td>
+                            <td>
+                                <a href="#" class="student-name" data-id="{{ $student->id }}">{{ $student->fname }} {{ $student->lname }}</a>
+                            </td>
                             <td>{{ $student->uid }}</td>
                             <td>{{ $student->email }}</td>
                             <td>{{ $student->mobile }}</td>
@@ -335,14 +393,35 @@
                 </tbody>
             </table>
 
+            <!-- Attendance Modal -->
+            <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="attendanceModalLabel">Student Attendance</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="attendanceChart" style="height: 500px;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex justify-content-center mt-3">
                 {!! $students->appends(request()->query())->links('pagination::bootstrap-5') !!}
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
     <script>
-        // Floating leaf animation (unchanged)
+        // Floating leaf animation
         document.addEventListener('DOMContentLoaded', function() {
             const leavesContainer = document.getElementById('leaves-container');
             const leafCount = 30;
@@ -374,7 +453,120 @@
                     createLeaf();
                 });
             }
+
+            // Initialize modal
+            const attendanceModal = new bootstrap.Modal(document.getElementById('attendanceModal'));
+            let chart = null;
+
+            // Student name click handler
+            document.querySelectorAll('.student-name').forEach(function(element) {
+                element.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const studentId = this.dataset.id;
+
+                    fetch(`{{ url('/students') }}/${studentId}/attendance-chart`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Destroy previous chart if exists
+                            if (chart) {
+                                chart.destroy();
+                            }
+
+                            // Create new chart
+                            chart = Highcharts.chart('attendanceChart', {
+                                chart: {
+                                    type: 'column',
+                                    backgroundColor: 'transparent',
+                                    height: 500
+                                },
+                                title: {
+                                    text: 'Monthly Attendance Overview',
+                                    style: {
+                                        fontFamily: 'Playfair Display, serif',
+                                        fontWeight: 'bold'
+                                    }
+                                },
+                                subtitle: {
+                                    text: 'Click a month to view subject-wise attendance'
+                                },
+                                xAxis: {
+                                    type: 'category'
+                                },
+                                yAxis: {
+                                    title: {
+                                        text: 'Number of Attendances'
+                                    }
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                plotOptions: {
+                                    series: {
+                                        borderWidth: 0,
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '{point.y}'
+                                        },
+                                        cursor: 'pointer',
+                                        point: {
+                                            events: {
+                                                click: function() {
+                                                    // Handle drilldown click
+                                                    if (this.drilldown) {
+                                                        chart.setTitle({
+                                                            text: this.name + ' Attendance'
+                                                        });
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    headerFormat: '<span style="font-size:14px">{series.name}</span><br>',
+                                    pointFormat: '<span>{point.name}</span>: <b>{point.y}</b><br/>'
+                                },
+                                series: [{
+                                    name: 'Attendance',
+                                    colorByPoint: true,
+                                    data: data.monthly
+                                }],
+                                drilldown: {
+                                    activeAxisLabelStyle: {
+                                        textDecoration: 'none',
+                                        fontStyle: 'italic'
+                                    },
+                                    activeDataLabelStyle: {
+                                        textDecoration: 'none'
+                                    },
+                                    series: data.drilldown
+                                }
+                            });
+
+                            // Show modal
+                            attendanceModal.show();
+                        })
+                        .catch(error => {
+                            console.error('Error fetching attendance data:', error);
+                            alert('Failed to load attendance data. Please try again.');
+                        });
+                });
+            });
+
+            // Reset chart when modal is closed
+            document.getElementById('attendanceModal').addEventListener('hidden.bs.modal', function () {
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+            });
         });
     </script>
 </body>
 </html>
+
