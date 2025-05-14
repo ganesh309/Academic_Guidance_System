@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\GenerateSummaryJob;
+
+
 
 
 ini_set('display_errors', 1);
@@ -34,28 +37,28 @@ class MentorController extends Controller
         $email = session('mentor_email');
         $faculty = Mentor::getFacultyData($email);
 
-            // Step 1: Fetch gender distribution from DB
-    $genderCounts = DB::table('students')
-    ->select('gender_id', DB::raw('count(*) as total'))
-    ->groupBy('gender_id')
-    ->pluck('total', 'gender_id')
-    ->toArray();
+        // Step 1: Fetch gender distribution from DB
+        $genderCounts = DB::table('students')
+            ->select('gender_id', DB::raw('count(*) as total'))
+            ->groupBy('gender_id')
+            ->pluck('total', 'gender_id')
+            ->toArray();
 
-// Step 2: Map gender_id to labels for Highcharts
-$mappedData = [];
+        // Step 2: Map gender_id to labels for Highcharts
+        $mappedData = [];
 
-$genderMap = [
-    1 => 'Male',
-    2 => 'Female',
-    3 => 'Third Gender'
-];
+        $genderMap = [
+            1 => 'Male',
+            2 => 'Female',
+            3 => 'Third Gender'
+        ];
 
-foreach ($genderMap as $id => $label) {
-    $mappedData[] = [
-        'name' => $label,
-        'y' => $genderCounts[$id] ?? 0
-    ];
-}
+        foreach ($genderMap as $id => $label) {
+            $mappedData[] = [
+                'name' => $label,
+                'y' => $genderCounts[$id] ?? 0
+            ];
+        }
 
         return view('mentor.mentorHome', compact('faculty', 'mappedData'));
     }
@@ -93,7 +96,7 @@ foreach ($genderMap as $id => $label) {
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('mentor.login');
+        return redirect()->route('welcome');
     }
 
     public function showUpdatePasswordForm()
@@ -157,6 +160,9 @@ foreach ($genderMap as $id => $label) {
                 $title = 'New Interaction';
                 return view('mentor.newInteractionMentor', compact('id', 'error'));
             }
+                        Log::info("Successfull");
+
+             GenerateSummaryJob::dispatch($id);
             $email = session('mentor_email');
             $mentees = Mentor::getAllMentees($email);
             return view('mentor.menteesMentor', compact('mentees'));
@@ -218,8 +224,7 @@ foreach ($genderMap as $id => $label) {
             ]);
 
             $success = Mentor::submitEditedInteraction($mentee_id, $interaction_id, $date, $validateData);
-            Log:
-            info('Success: ', (array) $success);
+            Log::info('Success: ', (array) $success);
             if (!$success) {
                 $error = 'Data Updation failed';
                 Log::error('Data insert failed', ['error_message' => $error]);
@@ -227,6 +232,7 @@ foreach ($genderMap as $id => $label) {
                 return redirect()->route('edit-interactions', ['mentee_id' => $mentee_id, "interaction_id" => $interaction_id, "date" => $date]);
             }
             Log::info("Update Successfull");
+             GenerateSummaryJob::dispatch($mentee_id);
 
             return redirect()->route('view-interactions', ['id' => $mentee_id]);
         } catch (ValidationException $e) {

@@ -1,131 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>👥 Mentor & Mentee List</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@include('layouts.header')
+<style>
+    body,
+    html {
+        background: url('/images/pic3.jpg') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        position: relative;
+    }
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    /* Faded overlay */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.88);
+        z-index: -1;
+    }
 
-    <style>
-        body, html {
-            background: url('/images/pic3.jpg') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            position: relative;
-        }
+    .main-content {
+        margin-left: 260px;
+        padding: 40px 30px;
+    }
 
-        /* Faded overlay */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(255, 255, 255, 0.88);
-            z-index: -1;
-        }
+    .card {
+        border: none;
+        border-radius: 15px;
+        background-color: #ffffffd9;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+    }
 
+    .card h2 {
+        font-weight: 600;
+        color: #2d3436;
+    }
+
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .table thead {
+        background-color: #374785;
+        color: #fff;
+    }
+
+    .table th,
+    .table td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 16px;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #f1f4fb;
+    }
+
+    .table tbody tr:hover {
+        background-color: #cfe2ff;
+        transition: background-color 0.3s ease;
+    }
+
+    .mentee-list {
+        list-style-type: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    .mentee-list li {
+        background-color: #dde7ff;
+        margin: 6px auto;
+        padding: 8px 14px;
+        border-radius: 6px;
+        width: fit-content;
+        display: inline-block;
+    }
+
+    .no-data {
+        text-align: center;
+        font-style: italic;
+        color: #888;
+    }
+
+    @media (max-width: 768px) {
         .main-content {
-            margin-left: 260px;
-            padding: 40px 30px;
+            margin-left: 0;
+            padding: 20px;
         }
 
-        .card {
-            border: none;
-            border-radius: 15px;
-            background-color: #ffffffd9;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+        .table th,
+        .table td {
+            font-size: 14px;
         }
-
-        .card h2 {
-            font-weight: 600;
-            color: #2d3436;
-        }
-
-        .table {
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .table thead {
-            background-color: #374785;
-            color: #fff;
-        }
-
-        .table th, .table td {
-            text-align: center;
-            vertical-align: middle;
-            padding: 16px;
-        }
-
-        .table tbody tr:nth-child(even) {
-            background-color: #f1f4fb;
-        }
-
-        .table tbody tr:hover {
-            background-color: #cfe2ff;
-            transition: background-color 0.3s ease;
-        }
-
-        .mentee-list {
-            list-style-type: none;
-            padding-left: 0;
-            margin: 0;
-        }
-
-        .mentee-list li {
-            background-color: #dde7ff;
-            margin: 6px auto;
-            padding: 8px 14px;
-            border-radius: 6px;
-            width: fit-content;
-            display: inline-block;
-        }
-
-        .no-data {
-            text-align: center;
-            font-style: italic;
-            color: #888;
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            .table th, .table td {
-                font-size: 14px;
-            }
-        }
-    </style>
-</head>
+    }
+</style>
 
 @include('layouts.sidebar')
-<body>
-    @if(session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: '✅ Success!',
-                text: "{{ session('success') }}",
-                confirmButtonColor: '#3085d6'
-            });
-        </script>
-    @endif
 
-    @if(session('error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: '⚠️ Oops...',
-                text: "{{ session('error') }}",
-                confirmButtonColor: '#d33'
-            });
-        </script>
-    @endif
+<body>
 
     <div class="main-content">
         <div class="card p-4">
@@ -140,22 +116,22 @@
                     </thead>
                     <tbody>
                         @forelse($mentors as $mentor)
-                            <tr>
-                                <td>{{ $mentor->faculty->fname ?? 'N/A' }} {{ $mentor->faculty->lname ?? 'N/A' }}</td>
-                                <td>
-                                    @forelse($mentor->mentees as $mentee)
-                                        <ul class="mentee-list mx-auto">
-                                            <li>🎓 {{ $mentee->student->fname ?? 'N/A' }} {{ $mentee->student->lname ?? 'N/A' }}</li>
-                                        </ul>
-                                    @empty
-                                        <span class="text-muted">🙅 No mentees assigned</span>
-                                    @endforelse
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>{{ $mentor->faculty->fname ?? 'N/A' }} {{ $mentor->faculty->lname ?? 'N/A' }}</td>
+                            <td>
+                                @forelse($mentor->mentees as $mentee)
+                                <ul class="mentee-list mx-auto">
+                                    <li>🎓 {{ $mentee->student->fname ?? 'N/A' }} {{ $mentee->student->lname ?? 'N/A' }}</li>
+                                </ul>
+                                @empty
+                                <span class="text-muted">🙅 No mentees assigned</span>
+                                @endforelse
+                            </td>
+                        </tr>
                         @empty
-                            <tr>
-                                <td colspan="2" class="no-data">😕 No mentors found.</td>
-                            </tr>
+                        <tr>
+                            <td colspan="2" class="no-data">😕 No mentors found.</td>
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -165,5 +141,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @include('layouts.footer')
 </body>
+
 </html>

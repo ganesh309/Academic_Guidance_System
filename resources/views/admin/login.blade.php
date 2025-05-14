@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login</title>
-
-    <!-- Bootstrap and FontAwesome -->
-    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/adminLogin.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+@include('layouts.header')
     <style>
         body, html {
             height: 100%;
@@ -125,7 +116,6 @@
             transform: scale(1);
         }
     </style>
-</head>
 <body>
 
     <div class="login-container">
@@ -158,26 +148,10 @@
         </div>
     </div>
 
-    <!-- JS Libraries -->
-    <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('popper.min.js') }}"></script>
-    <script src="{{ asset('alert.js') }}"></script>
 
 
     <!-- SweetAlert + Password Toggle Script -->
     <script>
-        window.onload = function () {
-            @if (session('error'))
-                Swal.fire({
-                    title: 'Error',
-                    text: "{{ session('error') }}",
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            @endif
-        };
-
         document.querySelector('.toggle-password').addEventListener('click', function () {
             const passwordInput = document.getElementById('password');
             const icon = this.querySelector('i');
@@ -193,5 +167,6 @@
             }
         });
     </script>
+    @include('layouts.footer')
 </body>
 </html>

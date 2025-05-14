@@ -122,7 +122,7 @@ class Mentor extends Authenticatable
                 ]
             );
 
-        Log::info("Updated");
+        // 
         return $updated;
     }
     public static function fetchInteractionData($mentee_id, $date)

@@ -10,7 +10,7 @@ use App\Http\Controllers\MenteeController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 // ===================================== Admin =====================================================================================
 
@@ -28,7 +28,7 @@ Route::get('/mentees-list', [AdminController::class, 'menteesList'])->name('ment
 Route::get('/mentor-mentees', [AdminController::class, 'mentorMenteeList'])->name('mentormentees.index');
 
 
-Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
+Route::get('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 
 Route::post('/assign-mentor', [AdminController::class, 'assignMentor'])->name('assign.mentor');
 

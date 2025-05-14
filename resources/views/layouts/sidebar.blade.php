@@ -1,6 +1,5 @@
 <!-- resources/views/layouts/sidebar.blade.php -->
 <!-- SweetAlert -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Sidebar Styles -->
 <style>
@@ -25,7 +24,7 @@
 
     .sidebar:hover {
         transform: perspective(800px) rotateY(5deg);
-        box-shadow: 5px 0 20px rgba(0,0,0,0.2);
+        box-shadow: 5px 0 20px rgba(0, 0, 0, 0.2);
     }
 
     .nav-btn {
@@ -44,7 +43,7 @@
         transform: translateZ(20px) scale(1.05);
         background: #e94560;
         color: white;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 </style>
 
@@ -54,8 +53,5 @@
     <a href="{{ route('students.index') }}" class="nav-btn">Student List</a>
     <a href="{{ route('mentees.index') }}" class="nav-btn">Mentee List</a>
     <a href="{{ route('mentormentees.index') }}" class="nav-btn">Mentor & Mentee List</a>
-    <form action="{{ route('admin.logout') }}" method="POST" class="d-inline">
-        @csrf
-        <button type="submit" class="nav-btn">Logout</button>
-    </form>
+    <a href="{{ route('admin.logout') }}" class="nav-btn">Logout</a>
 </div>

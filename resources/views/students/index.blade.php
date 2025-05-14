@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student List</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+@include('layouts.header')
     <style>
         :root {
             --primary-accent: #1E3A8A;
@@ -228,7 +223,6 @@
             color: var(--secondary-accent);
         }
 
-        /* Modal styles */
         .modal-content {
             border-radius: 15px;
             border: none;
@@ -251,15 +245,15 @@
             filter: invert(1);
         }
 
-        /* Highcharts container */
         #attendanceChart {
             width: 100%;
             height: 500px;
             margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .highcharts-background {
-            fill: transparent;
+            fill: #F9FAFB;
         }
 
         .highcharts-container {
@@ -272,19 +266,85 @@
         }
 
         .modal {
-    z-index: 1055; /* Ensure it's above the backdrop */
-}
-.modal-backdrop {
-    --bs-backdrop-zindex: 0;
-}
+            z-index: 1055;
+        }
 
-#attendanceChart {
-    position: relative;
-    z-index: 1060; /* Above modal content */
-}
+        .modal-backdrop {
+            --bs-backdrop-zindex: 0;
+        }
 
+        #attendanceChart {
+            position: relative;
+            z-index: 1060;
+        }
+
+        /* Student info in modal */
+        .student-info {
+            text-align: center;
+            padding-right: 1.5rem;
+            max-width: 200px;
+        }
+
+        .student-info img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .student-info p {
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .student-info p strong {
+            color: var(--primary-accent);
+        }
+
+        .attendance-chart-container {
+            flex: 1;
+        }
+
+        .modal-body {
+            display: flex;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        /* Custom modal width */
+        .modal-xl {
+            max-width: 90%;
+            width: 1200px;
+        }
+
+        @media (max-width: 1200px) {
+            .modal-xl {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .modal-body {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .student-info {
+                padding-right: 0;
+                margin-bottom: 1.5rem;
+                max-width: 100%;
+            }
+
+            .modal-xl {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
     </style>
-</head>
 <body>
     @include('layouts.sidebar')
     <div class="nature-bg"></div>
@@ -395,14 +455,23 @@
 
             <!-- Attendance Modal -->
             <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-dialog modal-xl modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="attendanceModalLabel">Student Attendance</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div id="attendanceChart" style="height: 500px;"></div>
+                            <div class="student-info">
+                                <img id="studentImage" src="" alt="Student Image" style="display: none;">
+                                <p><strong>UID:</strong> <span id="studentUid"></span></p>
+                                <p><strong>Degree:</strong> <span id="studentDegree"></span></p>
+                                <p><strong>Semester:</strong> <span id="studentSemester"></span></p>
+                                <p><strong>Batch:</strong> <span id="studentBatch"></span></p>
+                            </div>
+                            <div class="attendance-chart-container">
+                                <div id="attendanceChart" style="height: 500px;"></div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -472,64 +541,148 @@
                             return response.json();
                         })
                         .then(data => {
+                            // Update student image and details
+                            const studentImage = document.getElementById('studentImage');
+                            const studentUid = document.getElementById('studentUid');
+                            const studentDegree = document.getElementById('studentDegree');
+                            const studentSemester = document.getElementById('studentSemester');
+                            const studentBatch = document.getElementById('studentBatch');
+
+                            // Set image source
+                            if (data.student && data.student.image_filename) {
+                                studentImage.src = `{{ asset('studentImages') }}/${data.student.image_filename}`;
+                                studentImage.style.display = 'block';
+                            } else if (data.student && data.student.uid) {
+                                // Try common extensions
+                                const uid = data.student.uid;
+                                studentImage.src = `{{ asset('studentImages') }}/${uid}.jpg`;
+                                studentImage.onerror = () => {
+                                    studentImage.src = `{{ asset('studentImages') }}/${uid}.png`;
+                                    studentImage.onerror = () => {
+                                        studentImage.src = '';
+                                        studentImage.style.display = 'none';
+                                    };
+                                };
+                                studentImage.style.display = 'block';
+                            } else {
+                                studentImage.src = '';
+                                studentImage.style.display = 'none';
+                            }
+
+                            // Set student details
+                            studentUid.textContent = data.student?.uid ?? 'N/A';
+                            studentDegree.textContent = data.student?.degree?.name ?? 'N/A';
+                            studentSemester.textContent = data.student?.semester?.name ?? 'N/A';
+                            studentBatch.textContent = data.student?.batch?.name ?? 'N/A';
+
                             // Destroy previous chart if exists
                             if (chart) {
                                 chart.destroy();
                             }
 
-                            // Create new chart
+                            // Create new chart with modern styling
                             chart = Highcharts.chart('attendanceChart', {
                                 chart: {
                                     type: 'column',
-                                    backgroundColor: 'transparent',
-                                    height: 500
+                                    backgroundColor: '#F9FAFB',
+                                    borderRadius: 10,
+                                    height: 500,
+                                    animation: {
+                                        duration: 1000,
+                                        easing: 'easeOutBounce'
+                                    }
                                 },
+                                colors: ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'],
                                 title: {
                                     text: 'Monthly Attendance Overview',
                                     style: {
                                         fontFamily: 'Playfair Display, serif',
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        fontSize: '24px',
+                                        color: '#1F2937'
                                     }
                                 },
                                 subtitle: {
-                                    text: 'Click a month to view subject-wise attendance'
+                                    text: 'Click a month to view subject-wise attendance',
+                                    style: {
+                                        fontFamily: 'Poppins, sans-serif',
+                                        color: '#6B7280',
+                                        fontSize: '14px'
+                                    }
                                 },
                                 xAxis: {
-                                    type: 'category'
+                                    type: 'category',
+                                    labels: {
+                                        style: {
+                                            fontFamily: 'Poppins, sans-serif',
+                                            fontSize: '12px',
+                                            color: '#1F2937'
+                                        }
+                                    },
+                                    lineColor: '#E5E7EB',
+                                    tickColor: '#E5E7EB'
                                 },
                                 yAxis: {
                                     title: {
-                                        text: 'Number of Attendances'
-                                    }
+                                        text: 'Number of Attendances',
+                                        style: {
+                                            fontFamily: 'Poppins, sans-serif',
+                                            fontSize: '14px',
+                                            color: '#1F2937'
+                                        }
+                                    },
+                                    labels: {
+                                        style: {
+                                            fontFamily: 'Poppins, sans-serif',
+                                            fontSize: '12px',
+                                            color: '#1F2937'
+                                        }
+                                    },
+                                    gridLineColor: '#E5E7EB',
+                                    gridLineDashStyle: 'Dash'
                                 },
                                 legend: {
                                     enabled: false
                                 },
                                 plotOptions: {
-                                    series: {
+                                    column: {
+                                        borderRadius: 8,
                                         borderWidth: 0,
+                                        pointPadding: 0.1,
+                                        groupPadding: 0.15,
                                         dataLabels: {
                                             enabled: true,
-                                            format: '{point.y}'
+                                            format: '{point.y}',
+                                            style: {
+                                                fontFamily: 'Poppins, sans-serif',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                                color: '#FFFFFF',
+                                                textOutline: '1px contrast',
+                                                shadow: true
+                                            },
+                                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                            borderRadius: 5,
+                                            padding: 5
                                         },
-                                        cursor: 'pointer',
-                                        point: {
-                                            events: {
-                                                click: function() {
-                                                    // Handle drilldown click
-                                                    if (this.drilldown) {
-                                                        chart.setTitle({
-                                                            text: this.name + ' Attendance'
-                                                        });
-                                                    }
-                                                }
-                                            }
+                                        animation: {
+                                            duration: 800
                                         }
                                     }
                                 },
                                 tooltip: {
-                                    headerFormat: '<span style="font-size:14px">{series.name}</span><br>',
-                                    pointFormat: '<span>{point.name}</span>: <b>{point.y}</b><br/>'
+                                    backgroundColor: '#FFFFFF',
+                                    borderRadius: 10,
+                                    borderWidth: 0,
+                                    shadow: true,
+                                    padding: 10,
+                                    style: {
+                                        fontFamily: 'Poppins, sans-serif',
+                                        fontSize: '12px',
+                                        color: '#1F2937'
+                                    },
+                                    headerFormat: '<span style="font-size: 14px; font-weight: bold">{series.name}</span><br>',
+                                    pointFormat: '<span>{point.name}</span>: <b>{point.y}</b> attendances<br/>'
                                 },
                                 series: [{
                                     name: 'Attendance',
@@ -537,12 +690,19 @@
                                     data: data.monthly
                                 }],
                                 drilldown: {
+                                    animation: {
+                                        duration: 500
+                                    },
                                     activeAxisLabelStyle: {
+                                        fontFamily: 'Poppins, sans-serif',
                                         textDecoration: 'none',
-                                        fontStyle: 'italic'
+                                        fontStyle: 'italic',
+                                        color: '#1F2937'
                                     },
                                     activeDataLabelStyle: {
-                                        textDecoration: 'none'
+                                        fontFamily: 'Poppins, sans-serif',
+                                        textDecoration: 'none',
+                                        color: '#1F2937'
                                     },
                                     series: data.drilldown
                                 }
@@ -558,15 +718,22 @@
                 });
             });
 
-            // Reset chart when modal is closed
+            // Reset chart and student info when modal is closed
             document.getElementById('attendanceModal').addEventListener('hidden.bs.modal', function () {
                 if (chart) {
                     chart.destroy();
                     chart = null;
                 }
+                // Reset student info
+                document.getElementById('studentImage').src = '';
+                document.getElementById('studentImage').style.display = 'none';
+                document.getElementById('studentUid').textContent = '';
+                document.getElementById('studentDegree').textContent = '';
+                document.getElementById('studentSemester').textContent = '';
+                document.getElementById('studentBatch').textContent = '';
             });
         });
     </script>
+    @include('layouts.footer')
 </body>
 </html>
-

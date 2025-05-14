@@ -1,5 +1,5 @@
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById('country').addEventListener('change', function() {
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('country').addEventListener('change', function () {
         const countryId = this.value;
         const stateDropdown = document.getElementById('state');
         const districtDropdown = document.getElementById('district');
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    document.getElementById('state').addEventListener('change', function() {
+    document.getElementById('state').addEventListener('change', function () {
         const stateId = this.value;
         const districtDropdown = document.getElementById('district');
 
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 //....................................image&signature............................................//
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const imageModal = document.getElementById('imageModal');
     const signatureModal = document.getElementById('signatureModal');
 
@@ -101,11 +101,11 @@ document.addEventListener('DOMContentLoaded', function() {
         modalImage.src = imageUrl;
     });
 
-   
+
     signatureModal.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
         const signatureUrl = button.getAttribute('data-bs-signature');
         const modalSignature = signatureModal.querySelector('#modal-signature');
-        modalSignature.src = signatureUrl; 
+        modalSignature.src = signatureUrl;
     });
 });
