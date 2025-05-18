@@ -222,7 +222,7 @@ try {
     $semesters = Semester::all();
     $schools = School::all();
     $degrees = Degree::all();
-$title = "Students Admin";
+    $title = "Students Admin";
             return view('students.index', compact('students', 'genders', 'batches', 'semesters', 'schools', 'degrees','title'));
         } catch (Exception $e) {
             Log::info("error from the admin Controller function - studentsList: ", (array) $e);
@@ -238,71 +238,95 @@ $title = "Students Admin";
  */
 public function attendanceChart(Student $student)
 {
-try {
-    // Fetch monthly attendance (count of present days)
-    $monthlyAttendance = Attendance::selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total')
-        ->where('student_id', $student->id)
-        ->where('attendance', true) // Count only present days
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get();
+    try {
+        // Fetch monthly attendance (count of present days)
+        $monthlyAttendance = Attendance::selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total')
+            ->where('student_id', $student->id)
+            ->where('attendance', true)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
 
-    $monthly = [];
-    $drilldown = [];
+        // Fetch total classes per month (all records, regardless of attendance)
+        $monthlyTotalClasses = Attendance::selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total_classes')
+            ->where('student_id', $student->id)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month');
 
-    foreach ($monthlyAttendance as $record) {
-        $monthName = Carbon::createFromFormat('Y-m', $record->month)->format('F Y');
+        $monthly = [];
+        $drilldown = [];
 
-        // Fetch subject-wise attendance for this month
-        $subjects = Attendance::select('subjects.name', DB::raw('COUNT(*) as total'))
-            ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
-            ->where('attendances.student_id', $student->id)
-            ->where('attendances.attendance', true)
-            ->whereRaw('DATE_FORMAT(attendances.date, "%Y-%m") = ?', [$record->month])
-            ->groupBy('subjects.name')
-            ->pluck('total', 'subjects.name')
-            ->toArray();
+        foreach ($monthlyAttendance as $record) {
+            $monthName = Carbon::createFromFormat('Y-m', $record->month)->format('F Y');
+            $totalClasses = $monthlyTotalClasses->get($record->month)->total_classes ?? 0;
 
-        $drillData = [];
-        foreach ($subjects as $subject => $total) {
-            $drillData[] = [$subject, $total];
+            // Fetch subject-wise attendance for this month
+            $subjectAttendance = Attendance::select('subjects.name', DB::raw('COUNT(*) as total'))
+                ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
+                ->where('attendances.student_id', $student->id)
+                ->where('attendances.attendance', true)
+                ->whereRaw('DATE_FORMAT(attendances.date, "%Y-%m") = ?', [$record->month])
+                ->groupBy('subjects.name')
+                ->pluck('total', 'subjects.name')
+                ->toArray();
+
+            // Fetch total classes per subject for this month
+            $subjectTotalClasses = Attendance::select('subjects.name', DB::raw('COUNT(*) as total_classes'))
+                ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
+                ->where('attendances.student_id', $student->id)
+                ->whereRaw('DATE_FORMAT(attendances.date, "%Y-%m") = ?', [$record->month])
+                ->groupBy('subjects.name')
+                ->pluck('total_classes', 'subjects.name')
+                ->toArray();
+
+            $drillData = [];
+            foreach ($subjectAttendance as $subject => $total) {
+                $drillData[] = [
+                    'subject' => $subject,
+                    'attendance' => $total,
+                    'total_classes' => $subjectTotalClasses[$subject] ?? 0
+                ];
+            }
+
+            $monthly[] = [
+                'name' => $monthName,
+                'y' => $record->total,
+                'total_classes' => $totalClasses,
+                'drilldown' => $record->month
+            ];
+
+            $drilldown[] = [
+                'id' => $record->month,
+                'name' => $monthName . ' Subjects',
+                'data' => $drillData
+            ];
         }
 
-        $monthly[] = [
-            'name' => $monthName,
-            'y' => $record->total,
-            'drilldown' => $record->month
+        // Find the image file
+        $imagePath = public_path('studentImages/' . $student->uid . '.*');
+        $imageFile = glob($imagePath)[0] ?? null;
+        $imageFilename = $imageFile ? basename($imageFile) : null;
+
+        // Prepare student details
+        $studentData = [
+            'uid' => $student->uid,
+            'image_filename' => $imageFilename,
+            'degree' => ['name' => optional($student->degree)->name ?? 'N/A'],
+            'semester' => ['name' => optional($student->semester)->name ?? 'N/A'],
+            'batch' => ['name' => optional($student->batch)->name ?? 'N/A']
         ];
 
-        $drilldown[] = [
-            'id' => $record->month,
-            'name' => $monthName . ' Subjects',
-            'data' => $drillData
-        ];
+        return response()->json([
+            'monthly' => $monthly,
+            'drilldown' => $drilldown,
+            'student' => $studentData
+        ]);
+    } catch (Exception $e) {
+        Log::error("Error in attendanceChart: " . $e->getMessage());
+        return response()->json(['error' => 'Failed to fetch attendance data'], 500);
     }
-
-    // Find the image file
-    $imagePath = public_path('studentImages/' . $student->uid . '.*');
-    $imageFile = glob($imagePath)[0] ?? null;
-    $imageFilename = $imageFile ? basename($imageFile) : null;
-
-    // Prepare student details
-    $studentData = [
-        'uid' => $student->uid,
-        'image_filename' => $imageFilename,
-        'degree' => ['name' => optional($student->degree)->name ?? 'N/A'],
-        'semester' => ['name' => optional($student->semester)->name ?? 'N/A'],
-        'batch' => ['name' => optional($student->batch)->name ?? 'N/A']
-    ];
-
-    return response()->json([
-        'monthly' => $monthly,
-        'drilldown' => $drilldown,
-        'student' => $studentData
-    ]);
-} catch (Exception $e) {
-            Log::info("error from the admin Controller function - attendanceChart: ", (array) $e);
-        }
 }
     //----------------------------------------menteeslist--------------------------------------------------//
     public function menteesList()
@@ -392,24 +416,7 @@ try {
         }
     }
 
-    public function text()
-    {
-        $text = "The sun hadn’t risen yet, but Arjun was already awake.
-
-Eyes staring at the cracked ceiling of his one-room house in a Kolkata suburb, he lay there listening to the sound of rain tapping on the tin roof. His alarm hadn’t even rung yet. But the storm inside him had. Again.
-
-His father, a daily wage laborer, lay asleep on the floor beside his mother and younger sister. They had no bed. No table. No fridge. Just hope—and a second-hand Dell laptop with a broken hinge, rescued from a scrap shop.
-
-Arjun’s journey wasn’t poetic. It was raw. Gritty. Not the stuff Instagram reels are made of. He didn’t have fancy headphones while studying or a sunset-lit desk aesthetic. He had torn notes, unstable electricity, and a dream: to become a computer engineer.
-
-He zipped up his worn-out bag and stepped out into the grey morning, his sneakers squelching in the wet mud. A local train ride to the city, standing all the way because he couldn’t afford the luxury of a seat, was his daily reality. His government school had unreliable teachers, so he taught himself Python and JavaScript from whatever PDFs he could find. No Udemy. No YouTube Premium. Just pirated eBooks and patience.
-
-His classmates often mocked him for being quiet, for wearing the same two shirts every week. “Techie beggar,” one whispered once. Arjun smiled. Because they didn’t know the hunger burning inside him. Not just for food—but for transformation.
-
-College entrance exams loomed like a monster, one he had to slay without coaching or support. Every evening after school, he’d work at a small cyber café, fixing malware-ridden systems for ₹100 a day. That money wasn’t just survival. It was investment—into his data pack, his exam forms, and sometimes, a vada-pav dinner when the hunger pangs got too loud.
-
-In moments of darkness, when the failures piled up—mock test scores too low, sleep too little—Arjun would think of giving up. But then he’d remember his mother saying, “Tui hariye gele, amra sabai hariye jabo.” If you give up, we all will lose.";
-    }
+    
 
     public function logout(Request $request)
     {

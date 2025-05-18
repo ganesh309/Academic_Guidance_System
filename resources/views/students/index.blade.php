@@ -1,529 +1,606 @@
 <!DOCTYPE html>
 <html lang="en">
 @include('layouts.header')
-<style>
-    :root {
-        --primary-accent: #1E3A8A;
-        --secondary-accent: #B91C1C;
-        --text-primary: #1F2937;
-        --background-light: #F5F5F4;
-        --gold-accent: #D4AF37;
-        --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.1);
-        --glass-bg: rgba(255, 255, 255, 0.9);
-    }
-
-    body {
-        background: #87CEEB;
-        font-family: 'Poppins', sans-serif;
-        min-height: 100vh;
-        overflow-x: hidden;
-        color: var(--text-primary);
-        position: relative;
-        margin: 0;
-        padding-top: 80px; /* Adjust for fixed top navbar */
-    }
-
-    .nature-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: url('https://www.transparenttextures.com/patterns/leaf.png') repeat;
-        background-size: 200px 200px;
-        animation: natureShift 30s linear infinite;
-        opacity: 0.3;
-        z-index: -2;
-    }
-
-    @keyframes natureShift {
-        0% { background-position: 0 0; }
-        100% { background-position: 200px 200px; }
-    }
-
-    .leaves-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        pointer-events: none;
-    }
-
-    .leaf {
-        position: absolute;
-        width: 30px;
-        height: 30px;
-        background: url('https://www.pngall.com/wp-content/uploads/2016/05/Leaf-PNG-File.png') no-repeat center;
-        background-size: contain;
-        opacity: 0.7;
-        animation: fall linear infinite;
-    }
-
-    @keyframes fall {
-        0% {
-            opacity: 0;
-            transform: translateY(-100vh) rotate(0deg);
+    <style>
+        :root {
+            --primary-accent: #1E3A8A;
+            --secondary-accent: #B91C1C;
+            --text-primary: #1F2937;
+            --background-light: #F5F5F4;
+            --gold-accent: #D4AF37;
+            --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.9);
         }
-        20% {
-            opacity: 0.8;
+
+        body {
+            background: #87CEEB;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text-primary);
+            position: relative;
+            margin: 0;
+            padding-top: 80px;
         }
-        100% {
-            opacity: 0.2;
-            transform: translateY(100vh) rotate(360deg);
+
+        .nature-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/leaf.png') repeat;
+            background-size: 200px 200px;
+            animation: natureShift 30s linear infinite;
+            opacity: 0.3;
+            z-index: -2;
         }
-    }
 
-    .container {
-        margin: 2rem auto;
-        padding: 2rem;
-        background: var(--glass-bg);
-        border-radius: 20px;
-        box-shadow: var(--shadow-soft);
-        backdrop-filter: blur(10px);
-        animation: fadeIn 1s ease-out;
-        max-width: 95%;
-        width: 100%;
-        position: relative;
-        z-index: 1;
-    }
+        @keyframes natureShift {
+            0% { background-position: 0 0; }
+            100% { background-position: 200px 200px; }
+        }
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+        .leaves-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
 
-    h2 {
-        color: var(--text-primary);
-        font-family: 'Playfair Display', serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        text-align: center;
-        position: relative;
-        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+        .leaf {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: url('https://www.pngall.com/wp-content/uploads/2016/05/Leaf-PNG-File.png') no-repeat center;
+            background-size: contain;
+            opacity: 0.7;
+            animation: fall linear infinite;
+        }
 
-    h2::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
-        border-radius: 2px;
-    }
+        @keyframes fall {
+            0% {
+                opacity: 0;
+                transform: translateY(-100vh) rotate(0deg);
+            }
+            20% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 0.2;
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
 
-    .table-responsive {
-        overflow-x: auto;
-        border-radius: 12px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        margin-bottom: 0;
-        animation: tableSlide 0.8s ease-out;
-    }
-
-    @keyframes tableSlide {
-        from { opacity: 0; transform: translateX(-20px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-
-    .table-dark {
-        background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
-        color: white;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .table-dark th {
-        padding: 1.2rem;
-        border: none;
-        position: relative;
-        transition: all 0.3s ease;
-        text-align: center;
-        white-space: nowrap;
-    }
-
-    .table-dark th:hover {
-        background: rgba(255, 255, 255, 0.1);
-        transform: scale(1.02);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        cursor: pointer;
-    }
-
-    tbody tr {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(240, 240, 240, 0.8));
-        transition: all 0.3s ease;
-        animation: rowHighlight 0.6s ease-out forwards;
-    }
-
-    td {
-        padding: 1rem;
-        color: var(--text-primary);
-        font-weight: 400;
-        border: 1px solid #E5E7EB; /* Ensure both row and column borders */
-        vertical-align: middle;
-        text-align: center;
-    }
-
-    td:first-child {
-        font-weight: 600;
-        color: var(--primary-accent);
-    }
-
-    .btn {
-        background: var(--primary-accent);
-        color: white;
-        margin-top: 10px;
-        border-radius: 5px;
-        text-transform: uppercase;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn:hover {
-        background: var(--secondary-accent);
-        transform: scale(1.05);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .btn-secondary {
-        background: #6B7280;
-    }
-
-    .btn-secondary:hover {
-        background: #4B5563;
-        transform: scale(1.05);
-    }
-
-    .badge {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        border-radius: 12px;
-        background: var(--gold-accent);
-        color: white;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .badge:hover {
-        background: var(--secondary-accent);
-        color: white;
-    }
-
-    .student-name {
-        cursor: pointer;
-        color: var(--primary-accent);
-        text-decoration: underline;
-    }
-
-    .student-name:hover {
-        color: var(--secondary-accent);
-    }
-
-    .modal-content {
-        border-radius: 15px;
-        border: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal-header {
-        background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
-        color: white;
-        border-radius: 15px 15px 0 0;
-        border-bottom: none;
-    }
-
-    .modal-title {
-        font-family: 'Playfair Display', serif;
-        font-weight: 700;
-    }
-
-    .btn-close {
-        filter: invert(1);
-    }
-
-    #attendanceChart {
-        width: 100%;
-        height: 400px;
-        margin: 0 auto;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .highcharts-background {
-        fill: #F9FAFB;
-    }
-
-    .highcharts-container {
-        font-family: 'Poppins', sans-serif !important;
-    }
-
-    .highcharts-title {
-        font-family: 'Playfair Display', serif !important;
-        font-weight: 700 !important;
-    }
-
-    .modal {
-        z-index: 1055;
-    }
-
-    .modal-backdrop {
-        --bs-backdrop-zindex: 0;
-    }
-
-    #attendanceChart {
-        position: relative;
-        z-index: 1060;
-    }
-
-    .student-info {
-        text-align: center;
-        padding-right: 1.5rem;
-        max-width: 200px;
-    }
-
-    .student-info img {
-        width: 150px;
-        height: 150px;
-        object-fit: cover;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 1rem;
-    }
-
-    .student-info p {
-        margin: 0.5rem 0;
-        font-size: 0.9rem;
-        color: var(--text-primary);
-    }
-
-    .student-info p strong {
-        color: var(--primary-accent);
-    }
-
-    .attendance-chart-container {
-        flex: 1;
-    }
-
-    .modal-body {
-        display: flex;
-        gap: 2rem;
-        padding: 2rem;
-    }
-
-    .modal-xl {
-        max-width: 90%;
-        width: 1200px;
-    }
-
-    .search-container {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 1rem;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .universal-search {
-        flex: 1;
-        max-width: 400px;
-        order: 2;
-    }
-
-    .per-page-select {
-        flex: 0 0 auto;
-        width: 150px;
-        order: 1;
-    }
-
-    .pagination-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 1.5rem;
-    }
-
-    .accordion-button {
-        background: #4174b0bd;
-        color: white;
-        font-weight: 600;
-        border-radius: 8px;
-        border: none;
-        box-shadow: none; 
-    }
-
-    .accordion-button:not(.collapsed) {
-        background: #575757;
-        color: white;
-        border: none;
-        box-shadow: none;
-    }
-
-    .accordion-button::after {
-        filter: invert(1); 
-    }
-
-    .accordion-item {
-        border: none; 
-    }
-
-    .accordion-body {
-        background: #F9FAFB;
-        border-radius: 8px;
-        padding: 1.5rem;
-    }
-
-    .table-buttons {
-        text-align: center;
-        margin-bottom: 1rem;
-    }
-    .row{
-        flex-wrap: wrap;
-        align-content: flex-end;
-        justify-content: space-between;
-
-
-    }
-
-    /* Responsive Design */
-    @media (max-width: 1200px) {
         .container {
-            margin: 1.5rem auto;
-            padding: 1.5rem;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1s ease-out;
+            max-width: 95%;
+            width: 100%;
+            position: relative;
+            z-index: 1;
         }
 
-        .modal-xl {
-            width: 95%;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .table-dark th, td {
-            padding: 0.8rem;
+        h2 {
+            color: var(--text-primary);
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            text-align: center;
+            position: relative;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+            border-radius: 2px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 0;
+            animation: tableSlide 0.8s ease-out;
+        }
+
+        @keyframes tableSlide {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .table-dark {
+            background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-dark th {
+            padding: 1.2rem;
+            border: none;
+            position: relative;
+            transition: all 0.3s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .table-dark th:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        tbody tr {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(240, 240, 240, 0.8));
+            transition: all 0.3s ease;
+            animation: rowHighlight 0.6s ease-out forwards;
+        }
+
+        td {
+            padding: 1rem;
+            color: var(--text-primary);
+            font-weight: 400;
+            border: 1px solid #E5E7EB;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        td:first-child {
+            font-weight: 600;
+            color: var(--primary-accent);
+        }
+
+        .btn {
+            background: var(--primary-accent);
+            color: white;
+            margin-top: 10px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background: var(--secondary-accent);
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: #6B7280;
+        }
+
+        .btn-secondary:hover {
+            background: #4B5563;
+            transform: scale(1.05);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
             font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-radius: 12px;
+            background: var(--gold-accent);
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-    }
 
-    @media (max-width: 992px) {
-        .modal-body {
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
+        .badge:hover {
+            background: var(--secondary-accent);
+            color: white;
+        }
+
+        .student-name {
+            cursor: pointer;
+            color: var(--primary-accent);
+            text-decoration: underline;
+        }
+
+        .student-name:hover {
+            color: var(--secondary-accent);
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
+            color: white;
+            border-radius: 15px 15px 0 0;
+            border-bottom: none;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        #attendanceChart {
+            width: 100%;
+            height: 400px;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .highcharts-background {
+            fill: #F9FAFB;
+        }
+
+        .highcharts-container {
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        .highcharts-title {
+            font-family: 'Playfair Display', serif !important;
+            font-weight: 700 !important;
+        }
+
+        .modal {
+            z-index: 1055;
+        }
+
+        .modal-backdrop {
+            z-index: 1050;
+            position: unset;
+        }
+
+        #attendanceChart {
+            position: relative;
+            z-index: 1060;
         }
 
         .student-info {
-            padding-right: 0;
-            margin-bottom: 1.5rem;
-            max-width: 100%;
+            text-align: center;
+            padding-right: 1.5rem;
+            max-width: 200px;
+        }
+
+        .student-info img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .student-info p {
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .student-info p strong {
+            color: var(--primary-accent);
+        }
+
+        .attendance-chart-container {
+            flex: 1;
+        }
+
+        .modal-body {
+            display: flex;
+            gap: 2rem;
+            padding: 2rem;
         }
 
         .modal-xl {
-            width: 98%;
+            max-width: 90%;
+            width: 1200px;
         }
 
         .search-container {
-            flex-direction: column;
-            align-items: stretch;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
 
         .universal-search {
-            max-width: 100%;
+            flex: 1;
+            max-width: 400px;
             order: 2;
         }
 
         .per-page-select {
-            width: 100%;
+            flex: 0 0 auto;
+            width: 150px;
             order: 1;
         }
 
-        .row.g-3 {
-            flex-direction: column;
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
         }
 
-        .col-md-2 {
-            width: 100%;
-        }
-    }
-
-    @media (max-width: 768px) {
-        body {
-            padding-top: 100px; /* Adjust for mobile navbar height */
-        }
-
-        h2 {
-            font-size: 2rem;
+        .accordion-button {
+            background: #4174b0bd;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            box-shadow: none;
         }
 
-        .container {
-            margin: 1rem auto;
-            padding: 1rem;
+        .accordion-button:not(.collapsed) {
+            background: #575757;
+            color: white;
+            border: none;
+            box-shadow: none;
         }
 
-        .table-dark th, td {
-            padding: 0.6rem;
-            font-size: 0.85rem;
+        .accordion-button::after {
+            filter: invert(1);
         }
 
-        #attendanceChart {
-            height: 300px;
-        }
-
-        .modal-xl {
-            width: 100%;
-            max-width: 100%;
+        .accordion-item {
+            border: none;
         }
 
         .accordion-body {
-            padding: 1rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        h2 {
-            font-size: 1.75rem;
+            background: #F9FAFB;
+            border-radius: 8px;
+            padding: 1.5rem;
         }
 
-        .table-dark th, td {
-            padding: 0.5rem;
+        .table-buttons {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .row {
+            flex-wrap: wrap;
+            align-content: flex-end;
+            justify-content: space-between;
+        }
+
+        /* Updated Styles for Pie Chart */
+        .pie-chart-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pie-chart {
+            width: 150px; /* Increased from 100px */
+            height: 150px; /* Increased from 100px */
+            background: #F9FAFB;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .pie-chart-title {
+            font-family: 'Poppins', sans-serif;
             font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+            margin-top: 0.5rem;
         }
 
-        .btnARE {
-            padding: 0.6rem 1rem;
-            font-size: 0.9rem;
+        .pie-chart-legend {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.7rem;
+            color: #1F2937;
+            text-align: center;
+            margin-top: 0.5rem;
         }
 
-        .btn {
-            padding: 0.6rem 1rem;
-            font-size: 0.9rem;
+        .legend-color-present {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #3B82F6;
+            margin: 0 4px;
+            vertical-align: middle;
         }
 
-        .student-info img {
-            width: 120px;
-            height: 120px;
+        .legend-color-absent {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #000000;
+            margin: 0 4px;
+            vertical-align: middle;
         }
 
-        .universal-search {
-            width: 100%;
-        }
-    }
+        @media (max-width: 1200px) {
+            .container {
+                margin: 1.5rem auto;
+                padding: 1.5rem;
+            }
 
-    /* Accessibility */
-    .btn:focus, .student-name:focus, .accordion-button:focus, .form-select:focus {
-        outline: 2px solid var(--secondary-accent);
-        outline-offset: 2px;
-    }
-</style>
+            .modal-xl {
+                width: 95%;
+            }
+
+            .table-dark th, td {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .modal-body {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .student-info {
+                padding-right: 0;
+                margin-bottom: 1.5rem;
+                max-width: 100%;
+            }
+
+            .modal-xl {
+                width: 98%;
+            }
+
+            .search-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .universal-search {
+                max-width: 100%;
+                order: 2;
+            }
+
+            .per-page-select {
+                width: 100%;
+                order: 1;
+            }
+
+            .row.g-3 {
+                flex-direction: column;
+            }
+
+            .col-md-2 {
+                width: 100%;
+            }
+
+            .pie-chart {
+                width: 120px; /* Adjusted from 80px */
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 100px;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .container {
+                margin: 1rem auto;
+                padding: 1rem;
+            }
+
+            .table-dark th, td {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+            }
+
+            #attendanceChart {
+                height: 300px;
+            }
+
+            .modal-xl {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .accordion-body {
+                padding: 1rem;
+            }
+
+            .pie-chart {
+                width: 100px; /* Adjusted from 70px */
+                height: 100px;
+            }
+
+            .pie-chart-title {
+                font-size: 0.7rem;
+            }
+
+            .pie-chart-legend {
+                font-size: 0.65rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            h2 {
+                font-size: 1.75rem;
+            }
+
+            .table-dark th, td {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .student-info img {
+                width: 120px;
+                height: 120px;
+            }
+
+            .universal-search {
+                width: 100%;
+            }
+
+            .pie-chart {
+                width: 80px; /* Adjusted from 60px */
+                height: 80px;
+            }
+
+            .pie-chart-title {
+                font-size: 0.65rem;
+            }
+
+            .pie-chart-legend {
+                font-size: 0.6rem;
+            }
+        }
+
+        .btn:focus, .student-name:focus, .accordion-button:focus, .form-select:focus {
+            outline: 2px solid var(--secondary-accent);
+            outline-offset: 2px;
+        }
+    </style>
+
 <body>
-    @include('layouts.sidebar') <!-- Assuming this is the top navbar -->
+     @include('layouts.sidebar') 
     <div class="nature-bg"></div>
     <div class="leaves-container" id="leaves-container"></div>
     <div class="text-center">
@@ -666,6 +743,16 @@
                             <p><strong>Degree:</strong> <span id="studentDegree"></span></p>
                             <p><strong>Semester:</strong> <span id="studentSemester"></span></p>
                             <p><strong>Batch:</strong> <span id="studentBatch"></span></p>
+                            <div class="pie-chart-container">
+                                <div>
+                                    <div id="attendanceSummaryPieChart" class="pie-chart"></div>
+                                    <div class="pie-chart-title">Attendance Summary</div>
+                                    <div class="pie-chart-legend">
+                                        <span class="legend-color-present"></span>Present 
+                                        <span class="legend-color-absent"></span>Absent
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="attendance-chart-container">
                             <div id="attendanceChart" style="height: 400px;"></div>
@@ -679,14 +766,14 @@
         </div>
     </div>
 
-
+    <!-- Scripts -->
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/drilldown.js"></script>
     <script>
-        // Floating leaf animation
         document.addEventListener('DOMContentLoaded', function() {
+            // Floating leaf animation
             const leavesContainer = document.getElementById('leaves-container');
-            const leafCount = 20; // Reduced for performance on mobile
+            const leafCount = 20;
 
             for (let i = 0; i < leafCount; i++) {
                 createLeaf();
@@ -719,6 +806,7 @@
             // Initialize modal
             const attendanceModal = new bootstrap.Modal(document.getElementById('attendanceModal'));
             let chart = null;
+            let attendanceSummaryChart = null;
 
             // Student name click handler
             document.querySelectorAll('.student-name').forEach(function(element) {
@@ -741,12 +829,10 @@
                             const studentSemester = document.getElementById('studentSemester');
                             const studentBatch = document.getElementById('studentBatch');
 
-                            // Set image source
                             if (data.student && data.student.image_filename) {
                                 studentImage.src = `{{ asset('studentImages') }}/${data.student.image_filename}`;
                                 studentImage.style.display = 'block';
                             } else if (data.student && data.student.uid) {
-                                // Try common extensions
                                 const uid = data.student.uid;
                                 studentImage.src = `{{ asset('studentImages') }}/${uid}.jpg`;
                                 studentImage.onerror = () => {
@@ -762,18 +848,139 @@
                                 studentImage.style.display = 'none';
                             }
 
-                            // Set student details
                             studentUid.textContent = data.student?.uid ?? 'N/A';
                             studentDegree.textContent = data.student?.degree?.name ?? 'N/A';
                             studentSemester.textContent = data.student?.semester?.name ?? 'N/A';
                             studentBatch.textContent = data.student?.batch?.name ?? 'N/A';
 
-                            // Destroy previous chart if exists
+                            // Calculate totals for pie chart
+                            const totalClasses = data.monthly.reduce((sum, item) => sum + item.total_classes, 0);
+                            const totalAttendance = data.monthly.reduce((sum, item) => sum + item.y, 0);
+                            const notAttended = totalClasses - totalAttendance;
+                            const attendancePercentage = totalClasses > 0 ? (totalAttendance / totalClasses) * 100 : 0;
+
+                            // Destroy previous charts if they exist
                             if (chart) {
                                 chart.destroy();
                             }
+                            if (attendanceSummaryChart) {
+                                attendanceSummaryChart.destroy();
+                            }
 
-                            // Create new chart with modern styling
+                            // Combined Attendance Summary Pie Chart
+                            attendanceSummaryChart = Highcharts.chart('attendanceSummaryPieChart', {
+                                chart: {
+                                    type: 'pie',
+                                    backgroundColor: '#F9FAFB',
+                                    borderRadius: 8,
+                                    margin: [0, 0, 0, 0], // Removed extra margin since legend is custom
+                                    height: 150, // Increased to match CSS size
+                                    animation: {
+                                        duration: 1000,
+                                        easing: 'easeOutQuad'
+                                    }
+                                },
+                                title: {
+                                    text: null // Removed center percentage since it's now in data labels
+                                },
+                                tooltip: {
+                                    pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b> ({point.y} classes)',
+                                    backgroundColor: '#FFFFFF',
+                                    borderRadius: 5,
+                                    borderWidth: 0,
+                                    shadow: true,
+                                    style: {
+                                        fontFamily: 'Poppins, sans-serif',
+                                        fontSize: '10px'
+                                    }
+                                },
+                                legend: {
+                                    enabled: false // Disabled Highcharts legend
+                                },
+                                plotOptions: {
+                                    pie: {
+                                        allowPointSelect: false,
+                                        cursor: 'pointer',
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '{point.name}<br>{point.percentage:.1f}%',
+                                            style: {
+                                                fontFamily: 'Poppins, sans-serif',
+                                                fontSize: '10px',
+                                                fontWeight: 'bold',
+                                                color: '#FFFFFF',
+                                                textOutline: '1px contrast'
+                                            },
+                                            distance: -20, // Position inside the slice
+                                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                            borderRadius: 3,
+                                            padding: 3
+                                        },
+                                        size: '100%',
+                                        borderWidth: 2,
+                                        borderColor: '#F9FAFB',
+                                        animation: {
+                                            duration: 1000,
+                                            easing: 'easeOutQuad'
+                                        }
+                                    }
+                                },
+                                series: [{
+                                    name: 'Classes',
+                                    data: [
+                                        {
+                                            name: 'Present',
+                                            y: totalAttendance,
+                                            color: {
+                                                radialGradient: { cx: 0.5, cy: 0.5, r: 0.7 },
+                                                stops: [
+                                                    [0, '#3B82F6'],
+                                                    [1, Highcharts.color('#3B82F6').brighten(-0.2).get()]
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            name: 'Absent',
+                                            y: notAttended,
+                                            color: {
+                                                radialGradient: { cx: 0.5, cy: 0.5, r: 0.7 },
+                                                stops: [
+                                                    [0, '#000000'], // Changed to black
+                                                    [1, Highcharts.color('#000000').brighten(0.2).get()] // Slightly lighter black
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }],
+                                credits: {
+                                    enabled: false
+                                }
+                            });
+
+                            // Prepare monthly data for total classes and attendance
+                            const monthlyTotalClasses = data.monthly.map(item => ({
+                                name: item.name,
+                                y: item.total_classes
+                            }));
+
+                            const monthlyAttendance = data.monthly.map(item => ({
+                                name: item.name,
+                                y: item.y,
+                                drilldown: item.drilldown
+                            }));
+
+                            // Prepare drilldown data for subjects
+                            const drilldownSeries = data.drilldown.map(drill => ({
+                                id: drill.id,
+                                name: drill.name,
+                                data: drill.data.map(item => [
+                                    item.subject,
+                                    item.total_classes,
+                                    item.attendance
+                                ])
+                            }));
+
+                            // Create main attendance chart
                             chart = Highcharts.chart('attendanceChart', {
                                 chart: {
                                     type: 'column',
@@ -785,7 +992,7 @@
                                         easing: 'easeOutBounce'
                                     }
                                 },
-                                colors: ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'],
+                                colors: ['#6B7280', '#3B82F6', '#EF4444'],
                                 title: {
                                     text: 'Monthly Attendance Overview',
                                     style: {
@@ -796,7 +1003,7 @@
                                     }
                                 },
                                 subtitle: {
-                                    text: 'Click a month to view subject-wise attendance',
+                                    text: 'Click an attendance column to view subject-wise details',
                                     style: {
                                         fontFamily: 'Poppins, sans-serif',
                                         color: '#6B7280',
@@ -817,7 +1024,7 @@
                                 },
                                 yAxis: {
                                     title: {
-                                        text: 'Number of Attendances',
+                                        text: 'Number of Classes',
                                         style: {
                                             fontFamily: 'Poppins, sans-serif',
                                             fontSize: '12px',
@@ -835,14 +1042,20 @@
                                     gridLineDashStyle: 'Dash'
                                 },
                                 legend: {
-                                    enabled: false
+                                    enabled: true,
+                                    align: 'center',
+                                    verticalAlign: 'bottom',
+                                    itemStyle: {
+                                        fontFamily: 'Poppins, sans-serif',
+                                        fontSize: '12px'
+                                    }
                                 },
                                 plotOptions: {
                                     column: {
                                         borderRadius: 8,
                                         borderWidth: 0,
-                                        pointPadding: 0.1,
-                                        groupPadding: 0.15,
+                                        pointPadding: 0.05,
+                                        groupPadding: 0.1,
                                         dataLabels: {
                                             enabled: true,
                                             format: '{point.y}',
@@ -873,14 +1086,20 @@
                                         fontSize: '12px',
                                         color: '#1F2937'
                                     },
-                                    headerFormat: '<span style="font-size: 14px; font-weight: bold">{series.name}</span><br>',
-                                    pointFormat: '<span>{point.name}</span>: <b>{point.y}</b> attendances<br/>'
+                                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> {series.name.toLowerCase()}<br/>'
                                 },
-                                series: [{
-                                    name: 'Attendance',
-                                    colorByPoint: true,
-                                    data: data.monthly
-                                }],
+                                series: [
+                                    {
+                                        name: 'Total Classes',
+                                        data: monthlyTotalClasses,
+                                        color: '#6B7280'
+                                    },
+                                    {
+                                        name: 'Attendance',
+                                        data: monthlyAttendance,
+                                        color: '#3B82F6'
+                                    }
+                                ],
                                 drilldown: {
                                     animation: {
                                         duration: 500
@@ -896,7 +1115,38 @@
                                         textDecoration: 'none',
                                         color: '#1F2937'
                                     },
-                                    series: data.drilldown
+                                    series: drilldownSeries.map(drill => ({
+                                        id: drill.id,
+                                        name: drill.name,
+                                        type: 'column',
+                                        data: drill.data.map(item => ({
+                                            name: item[0],
+                                            y: item[1], // Total classes
+                                            custom: { attendance: item[2] } // Store attendance
+                                        })),
+                                        additionalSeries: [{
+                                            name: 'Attendance',
+                                            data: drill.data.map(item => ({
+                                                name: item[0],
+                                                y: item[2] // Attendance
+                                            })),
+                                            color: '#3B82F6'
+                                        }]
+                                    }))
+                                },
+                                events: {
+                                    drilldown: function(e) {
+                                        const chart = this;
+                                        const drilldownSeries = e.seriesOptions;
+                                        if (drilldownSeries.additionalSeries) {
+                                            setTimeout(() => {
+                                                drilldownSeries.additionalSeries.forEach(series => {
+                                                    chart.addSeries(series, false);
+                                                });
+                                                chart.redraw();
+                                            }, 0);
+                                        }
+                                    }
                                 }
                             });
 
@@ -910,13 +1160,16 @@
                 });
             });
 
-            // Reset chart and student info when modal is closed
+            // Reset charts and student info when modal is closed
             document.getElementById('attendanceModal').addEventListener('hidden.bs.modal', function () {
                 if (chart) {
                     chart.destroy();
                     chart = null;
                 }
-                // Reset student info
+                if (attendanceSummaryChart) {
+                    attendanceSummaryChart.destroy();
+                    attendanceSummaryChart = null;
+                }
                 document.getElementById('studentImage').src = '';
                 document.getElementById('studentImage').style.display = 'none';
                 document.getElementById('studentUid').textContent = '';
@@ -926,6 +1179,6 @@
             });
         });
     </script>
-    @include('layouts.footer')
+     @include('layouts.footer')
 </body>
 </html>

@@ -19,7 +19,7 @@
         min-height: 100vh;
         margin: 0;
         overflow-x: hidden;
-        padding-top: 80px; /* Adjust for fixed top navbar */
+        padding-top: 80px;
         color: var(--text-primary);
     }
 
@@ -88,6 +88,12 @@
         font-weight: 600;
         color: var(--text-primary);
         margin-bottom: 0.5rem;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .card-title:hover {
+        color: var(--accent-gradient-start);
     }
 
     /* Table Styles */
@@ -112,7 +118,6 @@
 
     .table th {
         padding: 1.2rem;
-        background: lightsteelblue;
         text-align: center;
         font-weight: 600;
         text-transform: uppercase;
@@ -136,6 +141,16 @@
         border: 1px solid #e9ecef;
     }
 
+    .student-name {
+        cursor: pointer;
+        color: var(--primary-gradient-start);
+        text-decoration: underline;
+    }
+
+    .student-name:hover {
+        color: var(--accent-gradient-start);
+    }
+
     /* Button Styles */
     .btn-assign {
         background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
@@ -146,7 +161,6 @@
         font-weight: 600;
         text-transform: uppercase;
         transition: all 0.3s ease;
- measurement: 2025-05-14T12:00:00Z
     }
 
     .btn-assign:hover {
@@ -191,6 +205,8 @@
     .modal-body {
         padding: 2rem;
         background: #f8f9fa;
+        display: flex;
+        gap: 2rem;
     }
 
     .modal-footer {
@@ -200,10 +216,69 @@
         padding: 1rem 1.5rem;
     }
 
-    .modal-dialog {
-        max-width: 800px; /* Increased modal width */
-        width: 90%;
-        margin: 1.75rem auto;
+    .modal-xl {
+        max-width: 90%;
+        width: 1200px;
+    }
+
+    .modal {
+        z-index: 1055;
+    }
+
+    .modal-backdrop {
+        --bs-backdrop-zindex: 0;
+        position: unset;
+    }
+
+    .student-info {
+        text-align: center;
+        padding-right: 1.5rem;
+        max-width: 200px;
+    }
+
+    .student-info img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1rem;
+    }
+
+    .student-info p {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+    }
+
+    .student-info p strong {
+        color: var(--primary-gradient-start);
+    }
+
+    .attendance-chart-container {
+        flex: 1;
+    }
+
+    #attendanceChart {
+        width: 100%;
+        height: 400px;
+        margin: 0 auto;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 1060;
+    }
+
+    .highcharts-background {
+        fill: #F9FAFB;
+    }
+
+    .highcharts-container {
+        font-family: 'Poppins', sans-serif !important;
+    }
+
+    .highcharts-title {
+        font-family: 'Playfair Display', serif !important;
+        font-weight: 700 !important;
     }
 
     .mentor-select {
@@ -238,7 +313,7 @@
     .mentor-detail-table td:first-child {
         color: #6b7280;
         font-weight: 500;
-        width: 30%; /* Adjusted for wider modal */
+        width: 30%;
     }
 
     .assign-btn {
@@ -256,25 +331,58 @@
         box-shadow: 0 6px 15px rgba(0, 180, 216, 0.3);
     }
 
+    /* Chart-Specific Styles from students_index.blade.php */
+    .btn {
+        background: var(--primary-gradient-start);
+        color: white;
+        margin-top: 10px;
+        border-radius: 5px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+        background: var(--accent-gradient-start);
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-secondary {
+        background: #6B7280;
+    }
+
+    .btn-secondary:hover {
+        background: #4B5563;
+        transform: scale(1.05);
+    }
+
     /* Responsive Modal Styles */
-    @media (max-width: 991px) {
-        .modal-dialog {
-            max-width: 90%;
-            margin: 1rem auto;
+    @media (max-width: 992px) {
+        .modal-body {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .mentor-detail-table td:first-child {
-            width: 40%;
+        .student-info {
+            padding-right: 0;
+            margin-bottom: 1.5rem;
+            max-width: 100%;
+        }
+
+        .modal-xl {
+            width: 95%;
         }
     }
 
     @media (max-width: 768px) {
         body {
-            padding-top: 100px; /* Adjust for mobile navbar height */
+            padding-top: 100px;
         }
 
-        .modal-dialog {
-            max-width: 95%;
+        .modal-xl {
+            width: 98%;
         }
 
         .modal-body {
@@ -285,29 +393,24 @@
             font-size: 1.25rem;
         }
 
-        .mentor-detail-table td {
-            padding: 0.75rem;
-            font-size: 0.9rem;
+        #attendanceChart {
+            height: 300px;
         }
     }
 
     @media (max-width: 576px) {
-        .modal-dialog {
-            max-width: 98%;
-            margin: 0.5rem auto;
+        .modal-xl {
+            width: 100%;
+            max-width: 100%;
         }
 
         .modal-body {
             padding: 1rem;
         }
 
-        .mentor-select {
-            font-size: 0.9rem;
-        }
-
-        .assign-btn {
-            padding: 0.6rem 1rem;
-            font-size: 0.9rem;
+        .student-info img {
+            width: 120px;
+            height: 120px;
         }
     }
 
@@ -372,13 +475,13 @@
     }
 
     /* Accessibility */
-    .btn-assign:focus, .assign-btn:focus, .mentor-select:focus {
+    .btn-assign:focus, .assign-btn:focus, .mentor-select:focus, .student-name:focus, .card-title:focus {
         outline: 2px solid var(--accent-gradient-start);
         outline-offset: 2px;
     }
 </style>
 <body>
-    @include('layouts.sidebar') <!-- Assuming this is the top navbar -->
+    @include('layouts.sidebar')
 
     <div class="container">
         <h2 data-aos="fade-down">Mentees List</h2>
@@ -400,7 +503,9 @@
                     @forelse($students as $student)
                     <tr data-aos="fade-right" style="animation-delay: {{ $loop->index * 0.1 }}s;">
                         <td>{{ $loop->iteration }}</td>
-                        <td class="fw-bold">{{ $student->fname }} {{ $student->lname }}</td>
+                        <td>
+                            <a href="#" class="student-name" data-id="{{ $student->id }}">{{ $student->fname }} {{ $student->lname }}</a>
+                        </td>
                         <td>{{ $student->degree->name ?? 'N/A' }}</td>
                         <td>{{ $student->school->name ?? 'N/A' }}</td>
                         <td><span class="badge bg-danger">{{ $student->sgpa ?? 'N/A' }}</span></td>
@@ -435,7 +540,7 @@
             <div class="card-mentee" data-aos="fade-up" style="animation-delay: {{ $loop->index * 0.1 }}s;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="card-title">{{ $student->fname }} {{ $student->lname }}</h5>
+                        <h5 class="card-title" data-id="{{ $student->id }}">{{ $student->fname }} {{ $student->lname }}</h5>
                         <span class="badge bg-danger">{{ $student->sgpa }}</span>
                     </div>
                     <div class="row">
@@ -466,6 +571,33 @@
             @empty
             <div class="text-center py-4">No mentees found with SGPA below 6.</div>
             @endforelse
+        </div>
+
+        <!-- Attendance Modal -->
+        <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="attendanceModalLabel">Student Attendance</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="student-info">
+                            <img id="studentImage" src="" alt="Student Image" style="display: none;">
+                            <p><strong>UID:</strong> <span id="studentUid"></span></p>
+                            <p><strong>Degree:</strong> <span id="studentDegree"></span></p>
+                            <p><strong>Semester:</strong> <span id="studentSemester"></span></p>
+                            <p><strong>Batch:</strong> <span id="studentBatch"></span></p>
+                        </div>
+                        <div class="attendance-chart-container">
+                            <div id="attendanceChart" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -561,6 +693,282 @@
     </div>
     @endforeach
 
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const attendanceModal = new bootstrap.Modal(document.getElementById('attendanceModal'));
+            let chart = null;
+
+            // Handle clicks on student names (table) and card titles (mobile)
+            document.querySelectorAll('.student-name, .card-title').forEach(function(element) {
+                element.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const studentId = this.dataset.id;
+
+                    fetch(`{{ url('/students') }}/${studentId}/attendance-chart`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Update student image and details
+                            const studentImage = document.getElementById('studentImage');
+                            const studentUid = document.getElementById('studentUid');
+                            const studentDegree = document.getElementById('studentDegree');
+                            const studentSemester = document.getElementById('studentSemester');
+                            const studentBatch = document.getElementById('studentBatch');
+
+                            // Set image source
+                            if (data.student && data.student.image_filename) {
+                                studentImage.src = `{{ asset('studentImages') }}/${data.student.image_filename}`;
+                                studentImage.style.display = 'block';
+                            } else if (data.student && data.student.uid) {
+                                studentImage.src = `{{ asset('studentImages') }}/${data.student.uid}.jpg`;
+                                studentImage.onerror = () => {
+                                    studentImage.src = `{{ asset('studentImages') }}/${data.student.uid}.png`;
+                                    studentImage.onerror = () => {
+                                        studentImage.src = '';
+                                        studentImage.style.display = 'none';
+                                    };
+                                };
+                                studentImage.style.display = 'block';
+                            } else {
+                                studentImage.src = '';
+                                studentImage.style.display = 'none';
+                            }
+
+                            // Set student details
+                            studentUid.textContent = data.student?.uid ?? 'N/A';
+                            studentDegree.textContent = data.student?.degree?.name ?? 'N/A';
+                            studentSemester.textContent = data.student?.semester?.name ?? 'N/A';
+                            studentBatch.textContent = data.student?.batch?.name ?? 'N/A';
+
+                            // Destroy previous chart if exists
+                            if (chart) {
+                                chart.destroy();
+                            }
+
+                            // Prepare monthly data for total classes and attendance
+                            const monthlyTotalClasses = data.monthly.map(item => ({
+                                name: item.name,
+                                y: item.total_classes
+                            }));
+
+                            const monthlyAttendance = data.monthly.map(item => ({
+                                name: item.name,
+                                y: item.y,
+                                drilldown: item.drilldown
+                            }));
+
+                            // Prepare drilldown data for subjects
+                            const drilldownSeries = data.drilldown.map(drill => ({
+                                id: drill.id,
+                                name: drill.name,
+                                data: drill.data.map(item => [
+                                    item.subject,
+                                    item.total_classes,
+                                    item.attendance
+                                ])
+                            }));
+
+                            // Create new chart
+                            chart = Highcharts.chart('attendanceChart', {
+                                chart: {
+                                    type: 'column',
+                                    backgroundColor: '#F9FAFB',
+                                    borderRadius: 10,
+                                    height: 400,
+                                    animation: {
+                                        duration: 1000,
+                                        easing: 'easeOutBounce'
+                                    }
+                                },
+                                colors: ['#6B7280', '#3B82F6', '#EF4444'],
+                                title: {
+                                    text: 'Monthly Attendance Overview',
+                                    style: {
+                                        fontFamily: 'Playfair Display, serif',
+                                        fontWeight: 'bold',
+                                        fontSize: '20px',
+                                        color: '#1F2937'
+                                    }
+                                },
+                                subtitle: {
+                                    text: 'Click an attendance column to view subject-wise details',
+                                    style: {
+                                        fontFamily: 'Poppins, sans-serif',
+                                        color: '#6B7280',
+                                        fontSize: '12px'
+                                    }
+                                },
+                                xAxis: {
+                                    type: 'category',
+                                    labels: {
+                                        style: {
+                                            fontFamily: 'Poppins, sans-serif',
+                                            fontSize: '11px',
+                                            color: '#1F2937'
+                                        }
+                                    },
+                                    lineColor: '#E5E7EB',
+                                    tickColor: '#E5E7EB'
+                                },
+                                yAxis: {
+                                    title: {
+                                        text: 'Number of Classes',
+                                        style: {
+                                            fontFamily: 'Poppins, sans-serif',
+                                            fontSize: '12px',
+                                            color: '#1F2937'
+                                        }
+                                    },
+                                    labels: {
+                                        style: {
+                                            fontFamily: 'Poppins, sans-serif',
+                                            fontSize: '11px',
+                                            color: '#1F2937'
+                                        }
+                                    },
+                                    gridLineColor: '#E5E7EB',
+                                    gridLineDashStyle: 'Dash'
+                                },
+                                legend: {
+                                    enabled: true,
+                                    align: 'center',
+                                    verticalAlign: 'bottom',
+                                    itemStyle: {
+                                        fontFamily: 'Poppins, sans-serif',
+                                        fontSize: '12px'
+                                    }
+                                },
+                                plotOptions: {
+                                    column: {
+                                        borderRadius: 8,
+                                        borderWidth: 0,
+                                        pointPadding: 0.05,
+                                        groupPadding: 0.1,
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '{point.y}',
+                                            style: {
+                                                fontFamily: 'Poppins, sans-serif',
+                                                fontSize: '11px',
+                                                fontWeight: 'bold',
+                                                color: '#FFFFFF',
+                                                textOutline: '1px contrast'
+                                            },
+                                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                            borderRadius: 5,
+                                            padding: 5
+                                        },
+                                        animation: {
+                                            duration: 800
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    backgroundColor: '#FFFFFF',
+                                    borderRadius: 10,
+                                    borderWidth: 0,
+                                    shadow: true,
+                                    padding: 10,
+                                    style: {
+                                        fontFamily: 'Poppins, sans-serif',
+                                        fontSize: '12px',
+                                        color: '#1F2937'
+                                    },
+                                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> {series.name.toLowerCase()}<br/>'
+                                },
+                                series: [
+                                    {
+                                        name: 'Total Classes',
+                                        data: monthlyTotalClasses,
+                                        color: '#6B7280'
+                                    },
+                                    {
+                                        name: 'Attendance',
+                                        data: monthlyAttendance,
+                                        color: '#3B82F6'
+                                    }
+                                ],
+                                drilldown: {
+                                    animation: {
+                                        duration: 500
+                                    },
+                                    activeAxisLabelStyle: {
+                                        fontFamily: 'Poppins, sans-serif',
+                                        textDecoration: 'none',
+                                        fontStyle: 'italic',
+                                        color: '#1F2937'
+                                    },
+                                    activeDataLabelStyle: {
+                                        fontFamily: 'Poppins, sans-serif',
+                                        textDecoration: 'none',
+                                        color: '#1F2937'
+                                    },
+                                    series: drilldownSeries.map(drill => ({
+                                        id: drill.id,
+                                        name: drill.name,
+                                        type: 'column',
+                                        data: drill.data.map(item => ({
+                                            name: item[0],
+                                            y: item[1], // Total classes
+                                            custom: { attendance: item[2] } // Store attendance
+                                        })),
+                                        additionalSeries: [{
+                                            name: 'Attendance',
+                                            data: drill.data.map(item => ({
+                                                name: item[0],
+                                                y: item[2] // Attendance
+                                            })),
+                                            color: '#3B82F6'
+                                        }]
+                                    }))
+                                },
+                                events: {
+                                    drilldown: function(e) {
+                                        const chart = this;
+                                        const drilldownSeries = e.seriesOptions;
+                                        if (drilldownSeries.additionalSeries) {
+                                            setTimeout(() => {
+                                                drilldownSeries.additionalSeries.forEach(series => {
+                                                    chart.addSeries(series, false);
+                                                });
+                                                chart.redraw();
+                                            }, 0);
+                                        }
+                                    }
+                                }
+                            });
+
+                            // Show modal
+                            attendanceModal.show();
+                        })
+                        .catch(error => {
+                            console.error('Error fetching attendance data:', error);
+                            alert('Failed to load attendance data. Please try again.');
+                        });
+                });
+            });
+
+            // Reset chart and student info when modal is closed
+            document.getElementById('attendanceModal').addEventListener('hidden.bs.modal', function () {
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+                document.getElementById('studentImage').src = '';
+                document.getElementById('studentImage').style.display = 'none';
+                document.getElementById('studentUid').textContent = '';
+                document.getElementById('studentDegree').textContent = '';
+                document.getElementById('studentSemester').textContent = '';
+                document.getElementById('studentBatch').textContent = '';
+            });
+        });
+    </script>
     @include('layouts.footer')
 </body>
 </html>
