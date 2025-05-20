@@ -1,5 +1,4 @@
 <footer>
-    <!-- Scripts -->
     <script src="{{ asset('js/alert.js') }}"></script>
     <script src="{{ asset('js/alertMessages.js') }}"></script>
     <script src="{{ asset('js/jquery.js') }}"></script>

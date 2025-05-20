@@ -1,5 +1,4 @@
 <style>
-    /* Updated Modern Navbar Styles */
     body {
         background: #f4f6f9;
         margin: 0;
