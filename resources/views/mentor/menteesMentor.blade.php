@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,6 +29,20 @@
             margin: 0;
             padding: 0;
             color: #334155;
+        }
+
+        /* Fix modal scroll issue */
+        body.modal-open {
+            overflow: auto !important;
+            padding-right: 0 !important;
+        }
+
+        .modal {
+            z-index: 1055;
+        }
+
+        .modal-backdrop {
+            z-index: 1050;
         }
 
         .sidebar {
@@ -135,6 +148,9 @@
             margin-left: 280px;
             padding: 40px 50px;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .header {
@@ -146,6 +162,9 @@
             box-shadow: var(--card-shadow);
             position: relative;
             overflow: hidden;
+            width: 88%;
+            max-width: 1200px;
+            text-align: center;
         }
 
         .header h2 {
@@ -173,6 +192,8 @@
             overflow: hidden;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             margin-bottom: 30px;
+            width: 100%;
+            max-width: 1200px;
         }
 
         .card:hover {
@@ -192,22 +213,38 @@
             padding-bottom: 15px;
             border-bottom: 2px solid var(--border-color);
             position: relative;
+            text-align: center;
         }
 
         .card-title::after {
             content: '';
             position: absolute;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             bottom: -2px;
             width: 60px;
             height: 2px;
             background-color: var(--primary-color);
         }
 
+        .table-section {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .table-responsive {
+            width: 100%;
+            max-width: 1200px;
+            overflow-x: auto;
+            margin: 0 auto;
+        }
+
         .table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
+            margin: 0 auto;
         }
 
         .table thead th {
@@ -220,6 +257,7 @@
             letter-spacing: 0.5px;
             border: none;
             position: relative;
+            text-align: center;
         }
         
         .table thead th:first-child {
@@ -244,6 +282,7 @@
             border-bottom: 1px solid var(--border-color);
             vertical-align: middle;
             font-size: 14px;
+            text-align: center;
         }
 
         .btn {
@@ -322,6 +361,8 @@
             overflow: hidden;
             border: none;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .modal-header {
@@ -329,11 +370,13 @@
             color: white;
             border-bottom: none;
             padding: 20px 24px;
+            text-align: center;
         }
 
         .modal-title {
             font-size: 18px;
             font-weight: 600;
+            margin: 0 auto;
         }
 
         .btn-close {
@@ -355,6 +398,8 @@
         .modal-footer {
             border-top: 1px solid var(--border-color);
             padding: 16px 24px;
+            display: flex;
+            justify-content: center;
         }
 
         .form-control {
@@ -363,6 +408,7 @@
             border: 1px solid var(--border-color);
             transition: all 0.2s ease;
             margin-bottom: 16px;
+            width: 80%;
         }
 
         .form-control:focus {
@@ -375,6 +421,7 @@
             color: var(--secondary-color);
             margin-bottom: 8px;
             display: block;
+            text-align: left;
         }
 
         /* Responsive styling */
@@ -383,8 +430,11 @@
                 width: 205px;
             }
             .main-content {
-                margin-left: 240px;
+                margin-left: 205px;
                 padding: 30px 40px;
+            }
+            .header, .card, .table-responsive {
+                max-width: 100%;
             }
         }
         
@@ -401,6 +451,29 @@
             }
             .table-responsive {
                 overflow-x: auto;
+            }
+            .modal-content {
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 15px;
+            }
+            .header {
+                padding: 20px;
+            }
+            .card-body {
+                padding: 20px;
+            }
+            .table thead th, .table tbody td {
+                font-size: 12px;
+                padding: 10px;
+            }
+            .btn-sm {
+                padding: 5px 8px;
+                font-size: 12px;
             }
         }
     </style>
@@ -432,7 +505,7 @@
                 <i class="fas fa-home"></i>Home
             </a>
             <a href="{{ route('mentor.mentees') }}" class="active">
-                <i class="fas fa-users"></i>Mentees
+                <i class="fas fa-users"></i> My Mentees
             </a>
             <a href="{{ route('mentor.interaction') }}">
                 <i class="fas fa-comments"></i>Interaction
