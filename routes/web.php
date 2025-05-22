@@ -20,7 +20,7 @@ Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('adm
 
 Route::get('/students-list', [AdminController::class, 'studentsList'])->name('students.index');
 Route::get('/students/{student}/attendance-chart', [AdminController::class, 'attendanceChart']);
-
+Route::get('/admin/generateReport/{mentee_id}', [AdminController::class, 'generateReport'])->name('generate.report');
 
 
 // Mentees List Route
@@ -59,7 +59,7 @@ Route::get('/fetch-interaction/{mentee_id}', [MentorController::class, 'fetchInt
 Route::get('/mentor/editInteraction/{mentee_id}/{interaction_id}/{date}', [MentorController::class, 'ShoweditInteractionForm'])->name('edit-interactions');
 Route::post('/mentor/submitEditedinteraction/{mentee_id}/{interaction_id}/{date}', [MentorController::class, 'submitEditedInteractionForm'])->name('submit-edited-interaction');
 Route::post('/mentor/setAppointment/{id}', [MentorController::class, 'setAppointmentWithMentee'])->name('set-appointment');
-// Route::get('/mentor/sendAppointment/{id}', [MentorController::class, 'sendAppointmentWithMail'])->name('send-appointment');
+
 
 Route::get('/mentor/changePasswordMentorOpenForm', [MentorController::class, 'changePasswordMentorOpenForm'])->name('mentor.change.password');
 Route::post('/mentor/mentorRequestPassword', [MentorController::class, 'mentorRequestPassword'])->name('mentor.request.password');

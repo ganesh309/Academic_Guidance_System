@@ -26,6 +26,7 @@ use Exception;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Http;
 
 class AdminController extends Controller
 {
@@ -68,158 +69,157 @@ class AdminController extends Controller
     }
 
     //---------------------------------------------All Students List----------------------------------------//
-   
-public function studentsList(Request $request)
-{
-try {
-    $query = Student::with(['academic', 'batch', 'degree', 'gender', 'school', 'semester', 'country', 'state', 'district']);
-    
-    if ($request->filled('search')) {
-        $search = $request->search;
-        $query->where(function ($q) use ($search) {
-            $q->where('registration_no', 'like', "%$search%")
-              ->orWhere('fname', 'like', "%$search%")
-              ->orWhere('lname', 'like', "%$search%")
-              ->orWhere('uid', 'like', "%$search%")
-              ->orWhere('email', 'like', "%$search%")
-              ->orWhere('mobile', 'like', "%$search%");
-        });
-    }
 
-    if ($request->filled('gender')) {
-        $query->where('gender_id', $request->gender);
-    }
+    public function studentsList(Request $request)
+    {
+        try {
+            $query = Student::with(['academic', 'batch', 'degree', 'gender', 'school', 'semester', 'country', 'state', 'district']);
 
-    if ($request->filled('batch')) {
-        $query->where('batch_id', $request->batch);
-    }
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('registration_no', 'like', "%$search%")
+                        ->orWhere('fname', 'like', "%$search%")
+                        ->orWhere('lname', 'like', "%$search%")
+                        ->orWhere('uid', 'like', "%$search%")
+                        ->orWhere('email', 'like', "%$search%")
+                        ->orWhere('mobile', 'like', "%$search%");
+                });
+            }
 
-    if ($request->filled('semester')) {
-        $query->where('semester_id', $request->semester);
-    }
+            if ($request->filled('gender')) {
+                $query->where('gender_id', $request->gender);
+            }
 
-    if ($request->filled('school')) {
-        $query->where('school_id', $request->school);
-    }
+            if ($request->filled('batch')) {
+                $query->where('batch_id', $request->batch);
+            }
 
-    if ($request->filled('degree')) {
-        $query->where('degree_id', $request->degree);
-    }
+            if ($request->filled('semester')) {
+                $query->where('semester_id', $request->semester);
+            }
 
-    $perPage = $request->input('per_page', 5);
-    $students = $query->paginate($perPage);
+            if ($request->filled('school')) {
+                $query->where('school_id', $request->school);
+            }
 
-    $genders = Gender::all();
-    $batches = Batch::all();
-    $semesters = Semester::all();
-    $schools = School::all();
-    $degrees = Degree::all();
-    $title = "Students Admin";
-            return view('students.index', compact('students', 'genders', 'batches', 'semesters', 'schools', 'degrees','title'));
+            if ($request->filled('degree')) {
+                $query->where('degree_id', $request->degree);
+            }
+
+            $perPage = $request->input('per_page', 5);
+            $students = $query->paginate($perPage);
+
+            $genders = Gender::all();
+            $batches = Batch::all();
+            $semesters = Semester::all();
+            $schools = School::all();
+            $degrees = Degree::all();
+            $title = "Students Admin";
+            return view('students.index', compact('students', 'genders', 'batches', 'semesters', 'schools', 'degrees', 'title'));
         } catch (Exception $e) {
             Log::info("error from the admin Controller function - studentsList: ", (array) $e);
         }
-    
-}
+    }
 
 
 
 
-/**
- * Return attendance chart data and student details for the modal.
- */
-public function attendanceChart(Student $student)
-{
-    try {
-        // Fetch monthly attendance (count of present days)
-        $monthlyAttendance = Attendance::selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total')
-            ->where('student_id', $student->id)
-            ->where('attendance', true)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
+    /**
+     * Return attendance chart data and student details for the modal.
+     */
+    public function attendanceChart(Student $student)
+    {
+        try {
+            // Fetch monthly attendance (count of present days)
+            $monthlyAttendance = Attendance::selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total')
+                ->where('student_id', $student->id)
+                ->where('attendance', true)
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get();
 
-        // Fetch total classes per month (all records, regardless of attendance)
-        $monthlyTotalClasses = Attendance::selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total_classes')
-            ->where('student_id', $student->id)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get()
-            ->keyBy('month');
+            // Fetch total classes per month (all records, regardless of attendance)
+            $monthlyTotalClasses = Attendance::selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total_classes')
+                ->where('student_id', $student->id)
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get()
+                ->keyBy('month');
 
-        $monthly = [];
-        $drilldown = [];
+            $monthly = [];
+            $drilldown = [];
 
-        foreach ($monthlyAttendance as $record) {
-            $monthName = Carbon::createFromFormat('Y-m', $record->month)->format('F Y');
-            $totalClasses = $monthlyTotalClasses->get($record->month)->total_classes ?? 0;
+            foreach ($monthlyAttendance as $record) {
+                $monthName = Carbon::createFromFormat('Y-m', $record->month)->format('F Y');
+                $totalClasses = $monthlyTotalClasses->get($record->month)->total_classes ?? 0;
 
-            // Fetch subject-wise attendance for this month
-            $subjectAttendance = Attendance::select('subjects.name', DB::raw('COUNT(*) as total'))
-                ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
-                ->where('attendances.student_id', $student->id)
-                ->where('attendances.attendance', true)
-                ->whereRaw('DATE_FORMAT(attendances.date, "%Y-%m") = ?', [$record->month])
-                ->groupBy('subjects.name')
-                ->pluck('total', 'subjects.name')
-                ->toArray();
+                // Fetch subject-wise attendance for this month
+                $subjectAttendance = Attendance::select('subjects.name', DB::raw('COUNT(*) as total'))
+                    ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
+                    ->where('attendances.student_id', $student->id)
+                    ->where('attendances.attendance', true)
+                    ->whereRaw('DATE_FORMAT(attendances.date, "%Y-%m") = ?', [$record->month])
+                    ->groupBy('subjects.name')
+                    ->pluck('total', 'subjects.name')
+                    ->toArray();
 
-            // Fetch total classes per subject for this month
-            $subjectTotalClasses = Attendance::select('subjects.name', DB::raw('COUNT(*) as total_classes'))
-                ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
-                ->where('attendances.student_id', $student->id)
-                ->whereRaw('DATE_FORMAT(attendances.date, "%Y-%m") = ?', [$record->month])
-                ->groupBy('subjects.name')
-                ->pluck('total_classes', 'subjects.name')
-                ->toArray();
+                // Fetch total classes per subject for this month
+                $subjectTotalClasses = Attendance::select('subjects.name', DB::raw('COUNT(*) as total_classes'))
+                    ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
+                    ->where('attendances.student_id', $student->id)
+                    ->whereRaw('DATE_FORMAT(attendances.date, "%Y-%m") = ?', [$record->month])
+                    ->groupBy('subjects.name')
+                    ->pluck('total_classes', 'subjects.name')
+                    ->toArray();
 
-            $drillData = [];
-            foreach ($subjectAttendance as $subject => $total) {
-                $drillData[] = [
-                    'subject' => $subject,
-                    'attendance' => $total,
-                    'total_classes' => $subjectTotalClasses[$subject] ?? 0
+                $drillData = [];
+                foreach ($subjectAttendance as $subject => $total) {
+                    $drillData[] = [
+                        'subject' => $subject,
+                        'attendance' => $total,
+                        'total_classes' => $subjectTotalClasses[$subject] ?? 0
+                    ];
+                }
+
+                $monthly[] = [
+                    'name' => $monthName,
+                    'y' => $record->total,
+                    'total_classes' => $totalClasses,
+                    'drilldown' => $record->month
+                ];
+
+                $drilldown[] = [
+                    'id' => $record->month,
+                    'name' => $monthName . ' Subjects',
+                    'data' => $drillData
                 ];
             }
 
-            $monthly[] = [
-                'name' => $monthName,
-                'y' => $record->total,
-                'total_classes' => $totalClasses,
-                'drilldown' => $record->month
+            // Find the image file
+            $imagePath = public_path('studentImages/' . $student->uid . '.*');
+            $imageFile = glob($imagePath)[0] ?? null;
+            $imageFilename = $imageFile ? basename($imageFile) : null;
+
+            // Prepare student details
+            $studentData = [
+                'uid' => $student->uid,
+                'image_filename' => $imageFilename,
+                'degree' => ['name' => optional($student->degree)->name ?? 'N/A'],
+                'semester' => ['name' => optional($student->semester)->name ?? 'N/A'],
+                'batch' => ['name' => optional($student->batch)->name ?? 'N/A']
             ];
 
-            $drilldown[] = [
-                'id' => $record->month,
-                'name' => $monthName . ' Subjects',
-                'data' => $drillData
-            ];
+            return response()->json([
+                'monthly' => $monthly,
+                'drilldown' => $drilldown,
+                'student' => $studentData
+            ]);
+        } catch (Exception $e) {
+            Log::error("Error in attendanceChart: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch attendance data'], 500);
         }
-
-        // Find the image file
-        $imagePath = public_path('studentImages/' . $student->uid . '.*');
-        $imageFile = glob($imagePath)[0] ?? null;
-        $imageFilename = $imageFile ? basename($imageFile) : null;
-
-        // Prepare student details
-        $studentData = [
-            'uid' => $student->uid,
-            'image_filename' => $imageFilename,
-            'degree' => ['name' => optional($student->degree)->name ?? 'N/A'],
-            'semester' => ['name' => optional($student->semester)->name ?? 'N/A'],
-            'batch' => ['name' => optional($student->batch)->name ?? 'N/A']
-        ];
-
-        return response()->json([
-            'monthly' => $monthly,
-            'drilldown' => $drilldown,
-            'student' => $studentData
-        ]);
-    } catch (Exception $e) {
-        Log::error("Error in attendanceChart: " . $e->getMessage());
-        return response()->json(['error' => 'Failed to fetch attendance data'], 500);
     }
-}
     //----------------------------------------menteeslist--------------------------------------------------//
     public function menteesList()
     {
@@ -308,7 +308,36 @@ public function attendanceChart(Student $student)
         }
     }
 
-    
+    public function generateReport(Request $request)
+
+    {
+        try{
+         Log::info('in the generateReport admin controller function');
+         Log::info('generateReport mentor: ', (array) $request->input('mentee_id'));
+        // $validateData = $request->validate(
+        //     [
+        //         'mentee_id' => 'required|exists:mentees,id'
+        //     ]
+        // );
+        // Log::info('generateReport mentor: ', (array) $validateData['mentee_id']);
+
+        // $text = Admin::getMenteeInteractions($validateData['mentee_id']);
+        $text = Admin::getMenteeInteractions(3);
+
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer YOUR_HUGGINGFACE_API_TOKEN',
+        ])->post('https://api-inference.huggingface.co/models/facebook/bart-large-cnn', [
+            'inputs' => $text,
+        ]);
+        dd($response);
+        }
+        catch (Exception $e) {
+            Log::info("error from the admin Controller function - generateReport: ", (array) $e);
+        }
+
+    }
+
 
     public function logout(Request $request)
     {
