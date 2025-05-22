@@ -5,6 +5,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\UniversityMail;
+use App\Mail\RequestPasswordMentor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Mentor;
@@ -61,8 +62,8 @@ class MentorController extends Controller
             ];
         }
         $title = "Mentor Home";
-        $success = "Login Successful";
-        return view('mentor.mentorHome', compact('faculty', 'mappedData', 'title', 'success'));
+
+        return view('mentor.mentorHome', compact('faculty', 'mappedData', 'title'));
     }
 
     public function login(Request $request)
@@ -98,7 +99,8 @@ class MentorController extends Controller
         $faculty = Mentor::getFacultyData($request->email);
         session(['mentor_email' => $faculty->email]);
         $title = "Mentor Home";
-        return view('mentor.mentorHome', compact('faculty', 'title'));
+        $success = "Login Successful!";
+        return view('mentor.mentorHome', compact('faculty', 'title', 'success'));
     }
 
     public function logout(Request $request)
@@ -109,7 +111,7 @@ class MentorController extends Controller
         $request->session()->regenerateToken();
         $title = "Home";
         $success = "Logout Successful!";
-        return redirect()->route('welcome', ['title' => $title,'success' => $success]);
+        return redirect()->route('welcome', ['title' => $title, 'success' => $success]);
     }
 
     public function showUpdatePasswordForm()
@@ -222,6 +224,9 @@ class MentorController extends Controller
 
         return view('partials.interaction_details', compact('interaction', 'mentee_id'));
     }
+
+
+
     public function ShoweditInteractionForm(Request $request, $mentee_id, $interaction_id, $date)
     {
         $interaction = Mentor::fetchInteractionData($mentee_id, $date);
@@ -297,6 +302,43 @@ class MentorController extends Controller
             Log::error('Failed to send mail', ['error_message' => $e->getMessage()]);
             $title = 'Mentees';
             return redirect()->route('mentor.mentees', compact('error'));
+        }
+    }
+
+
+    public function changePasswordMentorOpenForm()
+    {
+        $title = "Request Password Mentor";
+        return view('mentor.requestPasswordFormMentor', compact('title'));
+    }
+    public function mentorRequestPassword(Request $request)
+    {
+        try {
+            Log::info('in the mentorRequestPassword controller function');
+            $validateData = $request->validate([
+                'email' => 'required|exists:mentors,email',
+            ]);
+            Log::info('Request password mentor: ', (array) $validateData['email']);
+            $email = $validateData['email'];
+
+            $mentor = Mentor::getFacultyData($email);
+            $admin_mail = "sankarrajak1223@gmail.com";
+
+
+            Mail::to($admin_mail)->send(new RequestPasswordMentor($email, $mentor));
+            $title = "Mentor Login";
+            $success = "Soon Admin Will connect with you!";
+            return view('mentor.login', compact('title', 'success'));
+        } catch (ValidationException $e) {
+            $error = $e->getMessage();
+            Log::error('Request password from ', ['error_message' => $e->getMessage()]);
+            $title = 'Request Password Mentor';
+            return view('mentor.requestPasswordFormMentor', compact('title', 'error'));
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+            Log::error('Request password from ', ['error_message' => $e->getMessage()]);
+            $title = 'Request Password Mentor';
+            return view('mentor.requestPasswordFormMentor', compact('title', 'error'));
         }
     }
 }

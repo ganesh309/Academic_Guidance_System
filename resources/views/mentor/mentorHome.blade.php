@@ -14,9 +14,7 @@
         <a href="{{ route('mentor.mentees') }}">
             <i class="fas fa-users"></i>Mentees
         </a>
-        <a href="#">
-            <i class="fas fa-lock"></i>Change Password
-        </a>
+
 
         <div class="sidebar-divider"></div>
 
@@ -62,7 +60,7 @@
                 </tr>
                 <tr>
                     <td><b>Remarks</b></td>
-                    <td>Mentoring starts from 10-12-2024</td>
+                    <td>{{ $faculty->remarks ?? 'N/A' }}</td>
                 </tr>
             </table>
         </div>

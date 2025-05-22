@@ -5,8 +5,10 @@
 <body>
     <div class="login-container">
         <div class="card">
-            <h2>Login Here</h2>
-            <form action="{{ route('mentor.login') }}" method="POST">
+            <div class="card-title"><h2>Login Here</h2></div>
+            
+            <div class="card-body">
+                            <form action="{{ route('mentor.login') }}" method="POST">
                 @csrf
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
@@ -24,6 +26,10 @@
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
+            </div>
+            <div class="card-footer">
+                <a href="{{ route('mentor.change.password') }}" class="text-white"> Forget Password?</a>
+            </div>
         </div>
     </div>
 

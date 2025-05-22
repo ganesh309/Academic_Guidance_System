@@ -15,9 +15,6 @@
             <a href="{{ route('mentor.mentees') }}" class="active">
                 <i class="fas fa-users"></i> My Mentees
             </a>
-            <a href="#">
-                <i class="fas fa-lock"></i>Change Password
-            </a>
 
             <div class="sidebar-divider"></div>
 

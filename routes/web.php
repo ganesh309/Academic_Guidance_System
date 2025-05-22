@@ -61,11 +61,13 @@ Route::post('/mentor/submitEditedinteraction/{mentee_id}/{interaction_id}/{date}
 Route::post('/mentor/setAppointment/{id}', [MentorController::class, 'setAppointmentWithMentee'])->name('set-appointment');
 // Route::get('/mentor/sendAppointment/{id}', [MentorController::class, 'sendAppointmentWithMail'])->name('send-appointment');
 
+Route::get('/mentor/changePasswordMentorOpenForm', [MentorController::class, 'changePasswordMentorOpenForm'])->name('mentor.change.password');
+Route::post('/mentor/mentorRequestPassword', [MentorController::class, 'mentorRequestPassword'])->name('mentor.request.password');
+
 
 Route::get('/mentor/logout', [MentorController::class, 'logout'])->name('mentor.logout');
 
 
-// Route::get('/fetch-interaction/{mentee_id}/{user}', [MentorController::class, 'fetchInteraction'])->name('interactions.fetch');
 // ======================================== Mentee ==================================================================================
 
 Route::get('/mentee/login', [MenteeController::class, 'showLoginForm'])->name('mentee.login');
@@ -73,8 +75,11 @@ Route::post('/mentee/login', [MenteeController::class, 'login']);
 Route::get('/mentee/update-password', [MenteeController::class, 'showUpdatePasswordForm'])->name('mentee.update-password');
 Route::post('/mentee/update-password', [MenteeController::class, 'savePassword'])->name('mentee.save-password');
 Route::get('/mentee/dashboard', [MenteeController::class, 'menteeDashBoard'])->name('mentee.dashboard');
-Route::get('/mentee/interaction', [MenteeController::class, 'showInteractionForm'])->name('mentee.interaction');
+Route::get('/mentee/interaction/{mentee_id}', [MenteeController::class, 'viewInteractions'])->name('mentee.interaction');
 
+Route::get('/fetch-interaction/mentee/{mentee_id}', [MenteeController::class, 'fetchInteraction'])->name('interactions.fetch.mentee');
+Route::get('/mentee/changePasswordMenteeOpenForm', [MenteeController::class, 'changePasswordMenteeOpenForm'])->name('mentee.change.password');
+Route::post('/mentee/menteeRequestPassword', [MenteeController::class, 'mennteeRequestPassword'])->name('mentee.request.password');
 
 Route::get('/mentee/logout', [MenteeController::class, 'logout'])->name('mentee.logout');
 

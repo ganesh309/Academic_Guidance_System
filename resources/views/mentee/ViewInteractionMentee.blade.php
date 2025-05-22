@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mentee</title>
-    <link href="{{ asset('css/bootstrap.min.css')}}" rel="stylesheet">
+@include('layouts.header')
     <style>
         body {
             background-color: #f8f9fa;
@@ -38,47 +33,17 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
     </style>
-    <script src="{{ asset('js/jquery-3.6.0.min.js')}}"></script>
-    @php
-        $user = 'mentee'
-    @endphp
-    <script>
-        $(document).ready(function() {
-            $('#dateSelector').on('change', function() {
-                let selectedDate = $(this).val();
-
-                if (selectedDate !== "") {
-                    $.ajax({
-                        url: "{{ route('interactions.fetch', ['mentee_id' => $mentee_id, 'user' => $user]) }}",
-                        method: "GET",
-                        data: {
-                            date: selectedDate
-                        },
-                        success: function(response) {
-                            $('#detailsTable').html(response);
-                        },
-                        error: function() {
-                            $('#detailsTable').html('<p class="text-danger">Failed to load data. Try again.</p>');
-                        }
-                    });
-                } else {
-                    $('#detailsTable').html('');
-                }
-            });
-        });
-    </script>
-
-</head>
 
 <body>
+   @php
+    $user = 'mentee'
+    @endphp
+    <div class="sidebar">
+        <a href="{{ route('mentee.dashboard') }}"> Home</a>
+        <a href="{{ route('mentee.interaction',['mentee_id' => $mentee_id]) }}"> Interaction</a>
 
-<div class="sidebar">
-        <a href="{{ route('mentee.dashboard') }}"> Home</a><br>
-        
-        <a href="{{ route('mentee.interaction',['id' => $id,'mentee_id' => $mentee_id]) }}"> Interaction</a>
         <form action="{{ route('mentee.logout') }}" method="GET">
             @csrf
-            @method('GET')
             <button type="submit" class="btn btn-light mt-3">Logout</button>
         </form>
 
@@ -126,7 +91,33 @@
 
         </div>
     </div>
+    @include('layouts.footer')
+ 
+    <script>
+        $(document).ready(function() {
+            $('#dateSelector').on('change', function() {
+                let selectedDate = $(this).val();
 
+                if (selectedDate !== "") {
+                    $.ajax({
+                        url: "{{ route('interactions.fetch.mentee',['mentee_id' => $mentee_id]) }}",
+                        method: "GET",
+                        data: {
+                            date: selectedDate
+                        },
+                        success: function(response) {
+                            $('#detailsTable').html(response);
+                        },
+                        error: function() {
+                            $('#detailsTable').html('<p class="text-danger">Failed to load data. Try again.</p>');
+                        }
+                    });
+                } else {
+                    $('#detailsTable').html('');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

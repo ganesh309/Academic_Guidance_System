@@ -40,13 +40,12 @@
     </style>
 </head>
 
+
 <body>
     <div class="sidebar">
-        <h5>Home</h5>
-        <h5>Mentees</h5>
-        <a href="{{ route('mentee.interaction') }}"> Interaction</a>
-        <h5>View Interaction</h5>
-        <h5>Change Password</h5>
+        <a href="{{ route('mentee.dashboard') }}"> Home</a>
+        <a href="{{ route('mentee.interaction',['mentee_id' => $mentee->id]) }}"> Interaction</a>
+
         <form action="{{ route('mentee.logout') }}" method="GET">
             @csrf
             <button type="submit" class="btn btn-light mt-3">Logout</button>

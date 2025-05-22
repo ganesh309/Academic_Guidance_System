@@ -29,7 +29,7 @@ class UniversityMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Welcome to the Club!')
+        return $this->subject('University Guidance Program')
                     ->view('emails.requestAppointmentMail')
                     ->with(['mentee' => $this->mentee,'date' => $this->date,'time' => $this->time,'mentor_mobile' => $this->mentor_mobile]);
     }
