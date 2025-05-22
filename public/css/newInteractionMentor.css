@@ -21,7 +21,7 @@
     .sidebar {
         width: 250px;
         height: 100vh;
-        background: linear-gradient(135deg, var(--primary-color), #800000);
+        background:linear-gradient(135deg, #072b7e, #521b49);
         padding: 20px 0;
         position: fixed;
         left: 0;
@@ -187,7 +187,7 @@
     }
 
     .form-card-header {
-        background-color: var(--primary-color);
+        background-color:#1a6db0;
         color: var(--white);
         padding: 15px 25px;
         font-weight: 600;

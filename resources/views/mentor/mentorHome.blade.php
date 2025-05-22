@@ -30,8 +30,8 @@
 
     <div class="main-content">
         <div class="header">
-            The <span>Neotia</span> University
-        </div>
+                <h2>The Neotia University</h2>
+            </div>
 
         <div class="profile-card">
             <h4>Profile</h4>
