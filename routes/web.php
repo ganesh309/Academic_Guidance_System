@@ -55,7 +55,7 @@ Route::get('/mentor/interaction', [MentorController::class, 'showInteractionForm
 Route::get('/mentor/newinteraction/{id}', [MentorController::class, 'showNewInteractionForm'])->name('new-interaction');
 Route::post('/mentor/submitNewinteraction/{id}', [MentorController::class, 'submitNewInteractionForm'])->name('submit-new-interaction');
 Route::get('/mentor/viewInteractions/{id}', [MentorController::class, 'viewInteractions'])->name('view-interactions');
-// Route::get('/fetch-interaction/{mentee_id}', [MentorController::class, 'fetchInteraction'])->name('interactions.fetch');
+Route::get('/fetch-interaction/{mentee_id}', [MentorController::class, 'fetchInteraction'])->name('interactions.fetch');
 Route::get('/mentor/editInteraction/{mentee_id}/{interaction_id}/{date}', [MentorController::class, 'ShoweditInteractionForm'])->name('edit-interactions');
 Route::post('/mentor/submitEditedinteraction/{mentee_id}/{interaction_id}/{date}', [MentorController::class, 'submitEditedInteractionForm'])->name('submit-edited-interaction');
 Route::post('/mentor/setAppointment/{id}', [MentorController::class, 'setAppointmentWithMentee'])->name('set-appointment');
@@ -65,7 +65,7 @@ Route::post('/mentor/setAppointment/{id}', [MentorController::class, 'setAppoint
 Route::get('/mentor/logout', [MentorController::class, 'logout'])->name('mentor.logout');
 
 
-Route::get('/fetch-interaction/{mentee_id}/{user}', [MentorController::class, 'fetchInteraction'])->name('interactions.fetch');
+// Route::get('/fetch-interaction/{mentee_id}/{user}', [MentorController::class, 'fetchInteraction'])->name('interactions.fetch');
 // ======================================== Mentee ==================================================================================
 
 Route::get('/mentee/login', [MenteeController::class, 'showLoginForm'])->name('mentee.login');

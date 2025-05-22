@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="{{ asset('css/viewInteractionsMentor.css') }}">
 <body>
 
+
     <!-- Mobile sidebar toggle button -->
     <button class="toggle-sidebar d-md-none">
         <i class="fas fa-bars"></i>
@@ -91,7 +92,7 @@
     </div>
 </body>
 @include('layouts.footer')
-        <script>
+           <script>
         $(document).ready(function() {
             $('#dateSelector').on('change', function() {
                 let selectedDate = $(this).val();
@@ -120,6 +121,6 @@
                 $('.sidebar').toggleClass('active');
             });
         });
-    </script>
+    </script> 
 
 </html>

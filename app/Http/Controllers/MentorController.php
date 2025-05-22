@@ -30,8 +30,7 @@ class MentorController extends Controller
     public function showLoginForm()
     {
         $title = "Mentor Login";
-        $success = 'Login Successful!';
-        return view('mentor.login',compact('title','success'));
+        return view('mentor.login', compact('title'));
     }
 
     public function mentorDashBoard()
@@ -62,7 +61,8 @@ class MentorController extends Controller
             ];
         }
         $title = "Mentor Home";
-        return view('mentor.mentorHome', compact('faculty', 'mappedData','title'));
+        $success = "Login Successful";
+        return view('mentor.mentorHome', compact('faculty', 'mappedData', 'title', 'success'));
     }
 
     public function login(Request $request)
@@ -74,24 +74,31 @@ class MentorController extends Controller
         $mentor = Mentor::where('email', $request->email)->first();
         $password = hash('sha256', $request->password);
         // Log::info('Hashed Password: ',(array) $password);
-        if (!$mentor || ($password != $mentor->password)) {
+        if (!$mentor) {
             // Log::info($mentor->toArray());
             $title = "Mentor login";
-            $error = "Invalid email or password";
-            return redirect()->route('mentor.login',['error' => $error]);
+            $error = "Account Does not exist!";
+            return redirect()->route('mentor.login', ['error' => $error]);
+        }
+
+        if ($password != $mentor->password) {
+            // Log::info($mentor->toArray());
+            $title = "Mentor login";
+            $error = "Wrong Password!";
+            return redirect()->route('mentor.login', ['error' => $error]);
         }
         // Log::info($mentor->toArray());
         if (!$mentor->password_updated) {
             session(['mentor_id' => $mentor->id]);
             $title = "Password Update Mentor";
-            return redirect()->route('mentor.update-password',['title' => $title]);
+            return redirect()->route('mentor.update-password', ['title' => $title]);
         }
 
         Auth::guard('mentor')->login($mentor);
         $faculty = Mentor::getFacultyData($request->email);
         session(['mentor_email' => $faculty->email]);
         $title = "Mentor Home";
-        return view('mentor.mentorHome', compact('faculty','title'));
+        return view('mentor.mentorHome', compact('faculty', 'title'));
     }
 
     public function logout(Request $request)
@@ -101,7 +108,8 @@ class MentorController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         $title = "Home";
-        return redirect()->route('welcome',['title' => $title]);
+        $success = "Logout Successful!";
+        return redirect()->route('welcome', ['title' => $title,'success' => $success]);
     }
 
     public function showUpdatePasswordForm()
@@ -111,7 +119,7 @@ class MentorController extends Controller
             return redirect()->route('mentor.login');
         }
         $title = "Password Update Mentor";
-        return view('mentor.update-password',compact('title'));
+        return view('mentor.update-password', compact('title'));
     }
 
     public function savePassword(Request $request)
@@ -123,14 +131,14 @@ class MentorController extends Controller
         $mentor = Mentor::find(session('mentor_id'));
         if (!$mentor) {
             $error = "Something went wrong";
-            return redirect()->route('mentor.login',['error' => $error]);
+            return redirect()->route('mentor.login', ['error' => $error]);
         }
 
         $mentor->password = hash('sha256', $request->password);
         $mentor->password_updated = 1;
         $mentor->save();
         session()->forget('mentor_id');
-        return redirect()->route('mentor.login',['success' => 'Password updated successfully. Please log in again.' ]);
+        return redirect()->route('mentor.login', ['success' => 'Password updated successfully. Please log in again.']);
     }
 
     public function showInMentees()
@@ -138,13 +146,13 @@ class MentorController extends Controller
         $email = session('mentor_email');
         $mentees = Mentor::getAllMentees($email);
         $title = "Mentee List Mentor";
-        return view('mentor.menteesMentor', compact('mentees','title'));
+        return view('mentor.menteesMentor', compact('mentees', 'title'));
     }
 
     public function showNewInteractionForm(Request $request, $id)
     {
         $title = "New Interaction";
-        return view('mentor.newInteractionMentor', compact('id','title'));
+        return view('mentor.newInteractionMentor', compact('id', 'title'));
     }
 
     public function submitNewInteractionForm(Request $request, $id)
@@ -168,14 +176,14 @@ class MentorController extends Controller
                 $title = 'New Interaction';
                 return view('mentor.newInteractionMentor', compact('id', 'error'));
             }
-                        // Log::info("Successfull");
+            // Log::info("Successfull");
 
-             GenerateSummaryJob::dispatch($id);
+            GenerateSummaryJob::dispatch($id);
             $email = session('mentor_email');
             $mentees = Mentor::getAllMentees($email);
             $title = "Mentee List Mentor";
             $success = "Interaction Data Submitted!";
-            return view('mentor.menteesMentor', compact('mentees','title','success'));
+            return view('mentor.menteesMentor', compact('mentees', 'title', 'success'));
         } catch (ValidationException $e) {
             $error = $e->getMessage();
             Log::error('Data insert failed', ['error_message' => $e->getMessage()]);
@@ -195,7 +203,7 @@ class MentorController extends Controller
         $mentee = $data['mentee'];
         $dates = $data['interactions'];
         $title = "View Interactions";
-        return view('mentor.viewInteractionsMentor', compact('dates', 'mentee','title'));
+        return view('mentor.viewInteractionsMentor', compact('dates', 'mentee', 'title'));
     }
 
     public function fetchInteraction(Request $request, $mentee_id)
@@ -218,7 +226,7 @@ class MentorController extends Controller
     {
         $interaction = Mentor::fetchInteractionData($mentee_id, $date);
         $title = "Edit Interaction";
-        return view('mentor.editInteractionMentor', compact('mentee_id', 'interaction_id', 'date', 'interaction','title'));
+        return view('mentor.editInteractionMentor', compact('mentee_id', 'interaction_id', 'date', 'interaction', 'title'));
     }
 
     public function submitEditedInteractionForm(Request $request, $mentee_id, $interaction_id, $date)
@@ -240,12 +248,12 @@ class MentorController extends Controller
                 $error = 'Data Updation failed';
                 Log::error('Data insert failed', ['error_message' => $error]);
                 $title = 'Edit Interaction';
-                return redirect()->route('edit-interactions', ['mentee_id' => $mentee_id, "interaction_id" => $interaction_id, "date" => $date,'title' =>$title]);
+                return redirect()->route('edit-interactions', ['mentee_id' => $mentee_id, "interaction_id" => $interaction_id, "date" => $date, 'title' => $title]);
             }
             $success = "Update Successfull";
-             GenerateSummaryJob::dispatch($mentee_id);
+            GenerateSummaryJob::dispatch($mentee_id);
 
-            return redirect()->route('view-interactions', ['id' => $mentee_id,'success' => $success]);
+            return redirect()->route('view-interactions', ['id' => $mentee_id, 'success' => $success]);
         } catch (ValidationException $e) {
             $error = $e->getMessage();
             Log::error('Data insert failed', ['error_message' => $e->getMessage()]);
@@ -278,7 +286,7 @@ class MentorController extends Controller
             $time = $message['time'];
             Mail::to($mentee->email)->send(new UniversityMail($mentee, $date, $time, $mentor_mobile));
             Log::info('Mail has been sent.');
-            return redirect()->route('mentor.mentees',['success' => "Appointment set done!"]);
+            return redirect()->route('mentor.mentees', ['success' => "Appointment set done!"]);
         } catch (ValidationException $e) {
             $error = $e->getMessage();
             Log::error('Failed to send mail', ['error_message' => $e->getMessage()]);
