@@ -220,6 +220,18 @@
         padding: 2rem;
     }
 
+    .mentee_names{
+        display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    flex-wrap: wrap;
+    }
+    .tr_border{
+        
+    }
+
     /* Responsive Design */
     @media (max-width: 1200px) {
         .container {
@@ -296,9 +308,9 @@
                 </thead>
                 <tbody>
                     @forelse($mentors as $mentor)
-                        <tr style="animation-delay: {{ $loop->index * 0.1 }}s;">
+                        <tr class="tr_border" style="animation-delay: {{ $loop->index * 0.1 }}s;">
                             <td>{{ $mentor->faculty->fname ?? 'N/A' }} {{ $mentor->faculty->lname ?? 'N/A' }}</td>
-                            <td>
+                            <td class="mentee_names">
                                 @forelse($mentor->mentees as $mentee)
                                     <span class="mentee-badge">🎓 {{ $mentee->student->fname ?? 'N/A' }} {{ $mentee->student->lname ?? 'N/A' }}</span>
                                 @empty

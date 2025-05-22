@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <style>
     :root {
         --primary-accent: #1E3A8A;
@@ -20,7 +21,8 @@
         color: var(--text-primary);
         position: relative;
         margin: 0;
-        padding-top: 80px; /* Adjust for fixed navbar */
+        padding-top: 80px;
+        /* Adjust for fixed navbar */
     }
 
     body::before {
@@ -48,8 +50,13 @@
     }
 
     @keyframes natureShift {
-        0% { background-position: 0 0; }
-        100% { background-position: 200px 200px; }
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: 200px 200px;
+        }
     }
 
     .leaves-container {
@@ -77,9 +84,11 @@
             opacity: 0;
             transform: translateY(-100vh) rotate(0deg);
         }
+
         20% {
             opacity: 0.8;
         }
+
         100% {
             opacity: 0.2;
             transform: translateY(100vh) rotate(360deg);
@@ -90,8 +99,7 @@
     .navbar {
         position: fixed;
         top: 0;
-        left: 260px; /* Align with sidebar */
-        width: calc(100% - 260px); /* Adjust for sidebar */
+        width: 90%;
         background: var(--glass-bg);
         backdrop-filter: blur(10px);
         padding: 15px 5%;
@@ -167,7 +175,7 @@
         border-radius: 20px;
         backdrop-filter: blur(12px);
         animation: slideInLeft 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards,
-                    floatSection 6s ease-in-out infinite;
+            floatSection 6s ease-in-out infinite;
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
@@ -182,7 +190,7 @@
         max-width: 85%;
         transform: rotateY(20deg) rotateX(15deg);
         animation: floatImage 4s ease-in-out infinite,
-                    imageEntrance 1.5s ease-out forwards;
+            imageEntrance 1.5s ease-out forwards;
         transition: transform 0.3s ease;
     }
 
@@ -424,6 +432,7 @@
             transform: translateX(-100px) scale(0.9);
             opacity: 0;
         }
+
         to {
             transform: translateX(0) scale(1);
             opacity: 1;
@@ -435,6 +444,7 @@
             transform: rotateY(40deg) rotateX(25deg) translateX(150px);
             opacity: 0;
         }
+
         to {
             transform: rotateY(20deg) rotateX(15deg) translateX(0);
             opacity: 1;
@@ -442,9 +452,12 @@
     }
 
     @keyframes floatImage {
-        0%, 100% {
+
+        0%,
+        100% {
             transform: translateY(0) rotateY(20deg) rotateX(15deg);
         }
+
         50% {
             transform: translateY(-25px) rotateY(20deg) rotateX(15deg) translateX(10px);
         }
@@ -455,6 +468,7 @@
             opacity: 0;
             transform: translateY(-30px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -466,6 +480,7 @@
             opacity: 0;
             transform: translateY(30px) scale(0.95);
         }
+
         to {
             opacity: 1;
             transform: translateY(0) scale(1);
@@ -473,18 +488,24 @@
     }
 
     @keyframes floatSection {
-        0%, 100% {
+
+        0%,
+        100% {
             transform: translateY(0);
         }
+
         50% {
             transform: translateY(-15px);
         }
     }
 
     @keyframes blink {
-        0%, 100% {
+
+        0%,
+        100% {
             opacity: 1;
         }
+
         50% {
             opacity: 0;
         }
@@ -495,6 +516,7 @@
             opacity: 0;
             transform: translateY(20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -505,6 +527,7 @@
         0% {
             background-color: rgba(255, 255, 255, 0.1);
         }
+
         100% {
             background-color: rgba(255, 255, 255, 0.2);
         }
@@ -515,15 +538,19 @@
         .hero-section h1 {
             font-size: 3rem;
         }
+
         .hero-section h4 {
             font-size: 1.5rem;
         }
+
         .hero-section h5 {
             font-size: 1.1rem;
         }
+
         .hero-image {
             max-width: 90%;
         }
+
         .navbar-nav .nav-link {
             margin-left: 30px;
         }
@@ -534,20 +561,25 @@
             flex-direction: column;
             padding: 20px 5%;
         }
+
         .hero-section {
             max-width: 100%;
             margin-bottom: 20px;
         }
+
         .image-container {
             justify-content: center;
         }
+
         .hero-image {
             max-width: 70%;
         }
+
         .buttons-container {
             flex-wrap: wrap;
             justify-content: center;
         }
+
         .navbar-nav .nav-link {
             margin-left: 20px;
             font-size: 1rem;
@@ -556,32 +588,42 @@
 
     @media (max-width: 768px) {
         body {
-            padding-top: 100px; /* Adjust for mobile navbar */
+            padding-top: 100px;
+            /* Adjust for mobile navbar */
         }
+
         .navbar {
             left: 0;
-            width: 100%; /* Full width on mobile */
+            width: 100%;
+            /* Full width on mobile */
             padding: 10px 5%;
         }
+
         .navbar-brand {
             font-size: 1.5rem;
         }
+
         .navbar-nav .nav-link {
             margin-left: 15px;
             font-size: 0.9rem;
         }
+
         .hero-section h1 {
             font-size: 2.5rem;
         }
+
         .hero-section h4 {
             font-size: 1.3rem;
         }
+
         .hero-section h5 {
             font-size: 1rem;
         }
+
         .section h2 {
             font-size: 2.5rem;
         }
+
         .btn {
             padding: 12px 20px;
             font-size: 1rem;
@@ -593,24 +635,31 @@
             margin-left: 10px;
             font-size: 0.8rem;
         }
+
         .hero-section h1 {
             font-size: 2rem;
         }
+
         .hero-section h4 {
             font-size: 1.1rem;
         }
+
         .hero-section h5 {
             font-size: 0.9rem;
         }
+
         .section h2 {
             font-size: 2rem;
         }
+
         .hero-image {
             max-width: 80%;
         }
+
         .buttons-container {
             gap: 10px;
         }
+
         .btn {
             padding: 10px 15px;
             font-size: 0.9rem;
@@ -811,4 +860,5 @@
         });
     </script>
 </body>
+
 </html>
