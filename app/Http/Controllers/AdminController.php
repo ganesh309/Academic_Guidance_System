@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
 
 class AdminController extends Controller
 {
@@ -311,32 +312,51 @@ class AdminController extends Controller
     public function generateReport(Request $request)
 
     {
-        try{
-         Log::info('in the generateReport admin controller function');
-         Log::info('generateReport mentor: ', (array) $request->input('mentee_id'));
-        // $validateData = $request->validate(
-        //     [
-        //         'mentee_id' => 'required|exists:mentees,id'
-        //     ]
-        // );
-        // Log::info('generateReport mentor: ', (array) $validateData['mentee_id']);
+        try {
+            Log::info('in the generateReport admin controller function');
+            Log::info('generateReport mentor: ', (array) $request->input('mentee_id'));
+            // $validateData = $request->validate(
+            //     [
+            //         'mentee_id' => 'required|exists:mentees,id'
+            //     ]
+            // );
+            // Log::info('generateReport mentor: ', (array) $validateData['mentee_id']);
 
-        // $text = Admin::getMenteeInteractions($validateData['mentee_id']);
-        $text = Admin::getMenteeInteractions(3);
+            // $text = Admin::getMenteeInteractions($validateData['mentee_id']);
+            $text = Admin::getMenteeInteractions(3);
+            // dd($text);
+
+            // $promptedText = "Summarize the following mentee details and interactions comprehensively, including name, degree, semester, and all interaction details (dates, problems, remedies, observations):\n\n" . $text;
+            $apiUrl = 'https://api-inference.huggingface.co/models/facebook/bart-large-cnn';
+            $apiToken = env('HUGGING_FACE_API_TOKEN');
 
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer YOUR_HUGGINGFACE_API_TOKEN',
-        ])->post('https://api-inference.huggingface.co/models/facebook/bart-large-cnn', [
-            'inputs' => $text,
-        ]);
-        dd($response);
-        }
-        catch (Exception $e) {
+            $client = new Client();
+            $response = $client->post($apiUrl, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $apiToken,
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'inputs' => $text,
+                    'parameters' => [
+                        'min_length' => 5000,
+                        'max_length' => 50000,
+                        'num_beams' => 5,
+                        'no_repeat_ngram_size' => 5,
+                    ],
+                ],
+            ]);
+
+            $result = json_decode($response->getBody(), true);
+            $summary = $result[0]['summary_text'] ?? 'Error: No summary generated';
+
+            dd($summary);
+        } catch (Exception $e) {
             Log::info("error from the admin Controller function - generateReport: ", (array) $e);
         }
-
     }
+
 
 
     public function logout(Request $request)

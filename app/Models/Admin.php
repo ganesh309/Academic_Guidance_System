@@ -39,14 +39,15 @@ public static function getMenteeInteractions($mentee_id)
         ->where('m.id', $mentee_id)
         ->first();
 
-    $student_info = "Student Name: {$student->student_first_name} {$student->student_last_name}\n";
-    $student_info .= "Mobile: {$student->student_mobile}\n";
-    $student_info .= "Email: {$student->student_email}\n";
-    $student_info .= "Semester: {$student->current_semester}\n";
-    $student_info .= "Degree: {$student->current_degree}\n";
-    $student_info .= "School: {$student->current_school}\n";
-    $student_info .= "Academic Year: {$student->current_academic_year}\n";
-    $student_info .= "-----------------------------\n";
+    $student_info = "Make a summary on the following description.";
+    $student_info .= "Student Name: {$student->student_first_name} {$student->student_last_name}";
+    $student_info .= "Mobile: {$student->student_mobile}";
+    $student_info .= "Email: {$student->student_email}";
+    $student_info .= "Semester: {$student->current_semester}";
+    $student_info .= "Degree: {$student->current_degree}";
+    $student_info .= "School: {$student->current_school}";
+    $student_info .= "Academic Year: {$student->current_academic_year}";
+    
 
     $interactions = DB::table('interactions')
         ->where('mentee_id', $mentee_id)
@@ -61,12 +62,11 @@ public static function getMenteeInteractions($mentee_id)
         ->get();
 
     foreach ($interactions as $i) {
-        $student_info .= "Date: {$i->date}\n";
-        $student_info .= "Interaction: {$i->interaction}\n";
-        $student_info .= "Problem Understood: {$i->problem_understood}\n";
-        $student_info .= "Remedy: {$i->remedy}\n";
-        $student_info .= "Observation: {$i->observation}\n";
-        $student_info .= "-----------------------------\n";
+        $student_info .= "On Date: {$i->date}";
+        $student_info .= " {$i->interaction}";
+        $student_info .= " {$i->problem_understood}";
+        $student_info .= "{$i->remedy}";
+        $student_info .= "{$i->observation}";
     }
 
     // dd($student_info);
