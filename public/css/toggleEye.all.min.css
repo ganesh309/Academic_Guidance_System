@@ -1,5 +1,5 @@
 /*!
- * Font Awesome Free 6.5.0 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  * Copyright 2023 Fonticons, Inc.
  */
@@ -6385,6 +6385,7 @@
     content: "\f1c0"
 }
 
+.fa-arrow-turn-right:before,
 .fa-mail-forward:before,
 .fa-share:before {
     content: "\f064"
@@ -6848,10 +6849,6 @@
     content: "\f7e0"
 }
 
-.fa-pixiv:before {
-    content: "\e640"
-}
-
 .fa-wpexplorer:before {
     content: "\f2de"
 }
@@ -6986,10 +6983,6 @@
     content: "\f38f"
 }
 
-.fa-brave:before {
-    content: "\e63c"
-}
-
 .fa-sistrix:before {
     content: "\f3ee"
 }
@@ -7014,10 +7007,6 @@
 
 .fa-edge:before {
     content: "\f282"
-}
-
-.fa-threads:before {
-    content: "\e618"
 }
 
 .fa-napster:before {
@@ -7199,10 +7188,6 @@
     content: "\f384"
 }
 
-.fa-opensuse:before {
-    content: "\e62b"
-}
-
 .fa-pied-piper-alt:before {
     content: "\f1a8"
 }
@@ -7234,10 +7219,6 @@
 
 .fa-scribd:before {
     content: "\f28a"
-}
-
-.fa-debian:before {
-    content: "\e60b"
 }
 
 .fa-openid:before {
@@ -7381,10 +7362,6 @@
 
 .fa-bluetooth-b:before {
     content: "\f294"
-}
-
-.fa-square-letterboxd:before {
-    content: "\e62e"
 }
 
 .fa-sticker-mule:before {
@@ -7540,10 +7517,6 @@
     content: "\f612"
 }
 
-.fa-square-threads:before {
-    content: "\e619"
-}
-
 .fa-hackerrank:before {
     content: "\f5f7"
 }
@@ -7578,10 +7551,6 @@
 
 .fa-envira:before {
     content: "\f299"
-}
-
-.fa-google-scholar:before {
-    content: "\e63b"
 }
 
 .fa-gitlab-square:before,
@@ -7795,10 +7764,6 @@
     content: "\e531"
 }
 
-.fa-mintbit:before {
-    content: "\e62f"
-}
-
 .fa-ethereum:before {
     content: "\f42e"
 }
@@ -7829,10 +7794,6 @@
 
 .fa-bimobject:before {
     content: "\f378"
-}
-
-.fa-brave-reverse:before {
-    content: "\e63d"
 }
 
 .fa-facebook-f:before {
@@ -7965,10 +7926,6 @@
     content: "\f1d5"
 }
 
-.fa-letterboxd:before {
-    content: "\e62d"
-}
-
 .fa-symfony:before {
     content: "\f83d"
 }
@@ -7999,10 +7956,6 @@
 
 .fa-erlang:before {
     content: "\f39d"
-}
-
-.fa-x-twitter:before {
-    content: "\e61b"
 }
 
 .fa-cotton-bureau:before {
@@ -8139,10 +8092,6 @@
 
 .fa-cmplid:before {
     content: "\e360"
-}
-
-.fa-upwork:before {
-    content: "\e641"
 }
 
 .fa-facebook:before {
@@ -8631,10 +8580,6 @@
 
 .fa-quora:before {
     content: "\f2c4"
-}
-
-.fa-square-x-twitter:before {
-    content: "\e61a"
 }
 
 .fa-reacteurope:before {
