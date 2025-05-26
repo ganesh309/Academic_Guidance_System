@@ -21,7 +21,7 @@
         color: var(--text-primary);
         position: relative;
         margin: 0;
-        padding-top: 80px; /* Adjust for fixed top navbar */
+        padding-top: 80px;
     }
 
     body::before {
@@ -281,7 +281,6 @@
         }
     }
 
-    /* Accessibility */
     .mentee-badge:focus {
         outline: 2px solid var(--secondary-accent);
         outline-offset: 2px;
@@ -293,6 +292,7 @@
 <body>
     <div class="nature-bg"></div>
     <div class="leaves-container" id="leaves-container"></div>
+
     <div class="text-center">
         <h2>📋 Mentor & Mentee List</h2>
     </div>
@@ -312,7 +312,21 @@
                             <td>{{ $mentor->faculty->fname ?? 'N/A' }} {{ $mentor->faculty->lname ?? 'N/A' }}</td>
                             <td class="mentee_names">
                                 @forelse($mentor->mentees as $mentee)
-                                    <span class="mentee-badge">🎓 {{ $mentee->student->fname ?? 'N/A' }} {{ $mentee->student->lname ?? 'N/A' }}</span>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+                                        <span class="mentee-badge">🎓 {{ $mentee->student->fname ?? 'N/A' }} {{ $mentee->student->lname ?? 'N/A' }}</span>
+                                        
+                                        @if(in_array($mentee->id, $mentee_ids_with_interactions))
+                                            <button 
+                                                class="btn btn-sm btn-outline-danger report-btn"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#reportModal"
+                                                data-mentee-id="{{ $mentee->id }}"
+                                                data-mentee-name="{{ $mentee->student->fname ?? 'N/A' }} {{ $mentee->student->lname ?? '' }}"
+                                            >
+                                                📝 Report
+                                            </button>                                
+                                        @endif
+                                    </div>
                                 @empty
                                     <span class="text-muted">🙅 No mentees assigned</span>
                                 @endforelse
@@ -328,43 +342,70 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Floating leaf animation
-        document.addEventListener('DOMContentLoaded', function() {
-            const leavesContainer = document.getElementById('leaves-container');
-            const leafCount = 20; // Reduced for performance on mobile
+    <!-- Blade File (mentor-mentees/index.blade.php) -->
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportModalLabel">AI-Generated Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="loadingIndicator" class="text-center d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Generating AI report...</p>
+                </div>
+                <div id="aiReportContent"></div>
+                <div id="errorMessage" class="alert alert-danger d-none"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-            for (let i = 0; i < leafCount; i++) {
-                createLeaf();
-            }
+   <script>
+    document.querySelectorAll('.report-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const menteeId = button.getAttribute('data-mentee-id');
+            const menteeName = button.getAttribute('data-mentee-name');
 
-            function createLeaf() {
-                const leaf = document.createElement('div');
-                leaf.className = 'leaf';
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const aiReportContent = document.getElementById('aiReportContent');
+            const errorMessage = document.getElementById('errorMessage');
 
-                const startX = Math.random() * window.innerWidth;
-                const duration = Math.random() * 8 + 4;
-                const delay = Math.random() * 5;
-                const size = Math.random() * 15 + 8;
+            // Clear previous content
+            aiReportContent.innerHTML = '';
+            errorMessage.classList.add('d-none');
+            loadingIndicator.classList.remove('d-none');
 
-                leaf.style.left = `${startX}px`;
-                leaf.style.animationDuration = `${duration}s`;
-                leaf.style.animationDelay = `${delay}s`;
-                leaf.style.width = `${size}px`;
-                leaf.style.height = `${size}px`;
-                leaf.style.transform = `rotate(${Math.random() * 360}deg)`;
-
-                leavesContainer.appendChild(leaf);
-
-                leaf.addEventListener('animationend', () => {
-                    leaf.remove();
-                    createLeaf();
+            // Fetch report (replace URL with your actual route)
+            fetch(`/generate-report/${menteeId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch report.');
+                    }
+                    return response.text(); // Or `.json()` depending on your API
+                })
+                .then(data => {
+                    loadingIndicator.classList.add('d-none');
+                    aiReportContent.innerHTML = `<h6><strong>${menteeName}</strong></h6><p>${data}</p>`;
+                })
+                .catch(error => {
+                    loadingIndicator.classList.add('d-none');
+                    errorMessage.textContent = `❌ ${error.message}`;
+                    errorMessage.classList.remove('d-none');
                 });
-            }
         });
-    </script>
+    });
+</script>
+
+
+
+
     @include('layouts.footer')
 </body>
 </html>

@@ -22,9 +22,9 @@
         </a>
         <form action="{{ route('mentor.logout') }}" method="GET">
             @csrf
-            <button type="submit" class="btn btn-light mt-3">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
+             <button type="submit" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>Logout
+                </button>
         </form>
     </div>
 

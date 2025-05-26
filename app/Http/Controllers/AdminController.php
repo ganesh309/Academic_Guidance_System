@@ -15,6 +15,7 @@ use App\Models\Degree;
 use App\Models\Mentor;
 use App\Models\Attendance;
 use App\Models\Subject;
+use App\Models\Interaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -298,16 +299,19 @@ class AdminController extends Controller
     //----------------------------------------------MentorMentee list--------------------------------------//
 
     public function mentorMenteeList()
-    {
-        try {
-            $mentors = Mentor::with(['faculty', 'mentees.student'])->get();
+{
+    try {
+        $mentors = Mentor::with(['faculty', 'mentees.student'])->get();
+        $mentee_ids_with_interactions = Interaction::pluck('mentee_id')->toArray();
 
-            $title = "Mentor-Mentee List";
-            return view('mentor-mentees.index', compact('mentors', 'title'));
-        } catch (Exception $e) {
-            Log::info("error from the admin Controller function - mentorMenteeList: ", (array) $e);
-        }
+        $title = "Mentor-Mentee List";
+
+        return view('mentor-mentees.index', compact('mentors', 'mentee_ids_with_interactions', 'title'));
+    } catch (\Exception $e) {
+        Log::info("Error from the AdminController function - mentorMenteeList: ", ['error' => $e->getMessage()]);
+        return back()->with('error', 'Something went wrong while loading the mentor-mentee list.');
     }
+}
 
     public function generateReport(Request $request)
 
@@ -323,7 +327,9 @@ class AdminController extends Controller
             // Log::info('generateReport mentor: ', (array) $validateData['mentee_id']);
 
             // $text = Admin::getMenteeInteractions($validateData['mentee_id']);
-            $text = Admin::getMenteeInteractions(3);
+            $menteeId = $request->input('mentee_id');
+            $text = Admin::getMenteeInteractions($menteeId);
+ 
             // dd($text);
 
             // $promptedText = "Summarize the following mentee details and interactions comprehensively, including name, degree, semester, and all interaction details (dates, problems, remedies, observations):\n\n" . $text;

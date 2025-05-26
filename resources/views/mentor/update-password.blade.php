@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 @include('layouts.header')
- <link rel="stylesheet" href="{{ asset('css/newInteractionMentor.css') }}">
+ <link rel="stylesheet" href="{{ asset('css/update-password-mentor.css') }}">
 <body>
     <!-- Background Particles -->
     <div class="particles" id="particles"></div>
