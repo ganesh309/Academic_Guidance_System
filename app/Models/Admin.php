@@ -39,14 +39,11 @@ public static function getMenteeInteractions($mentee_id)
         ->where('m.id', $mentee_id)
         ->first();
 
-    $student_info = "Make a summary on the following description.";
-    $student_info .= "Student Name: {$student->student_first_name} {$student->student_last_name}";
-    $student_info .= "Mobile: {$student->student_mobile}";
-    $student_info .= "Email: {$student->student_email}";
-    $student_info .= "Semester: {$student->current_semester}";
-    $student_info .= "Degree: {$student->current_degree}";
-    $student_info .= "School: {$student->current_school}";
-    $student_info .= "Academic Year: {$student->current_academic_year}";
+    $student_info = "Make a summary on the following description about a mentees overall progress. Keep it in easy to understand language. Keep maximum 150 words short in the result. try to avoid redundent words. ";
+    // $student_info .= " Student Name: {$student->student_first_name} {$student->student_last_name}";
+    // $student_info .= ", Semester: {$student->current_semester}";
+    // $student_info .= ", Degree: {$student->current_degree}";
+    $student_info .= ".";
     
 
     $interactions = DB::table('interactions')
@@ -62,15 +59,38 @@ public static function getMenteeInteractions($mentee_id)
         ->get();
 
     foreach ($interactions as $i) {
-        $student_info .= "On Date: {$i->date}";
-        $student_info .= " {$i->interaction}";
-        $student_info .= " {$i->problem_understood}";
-        $student_info .= "{$i->remedy}";
-        $student_info .= "{$i->observation}";
+        $student_info .= ". On Date: {$i->date}";
+        $student_info .= ", {$i->interaction}";
+        $student_info .= ", {$i->problem_understood}";
+        $student_info .= ", {$i->remedy}";
+        $student_info .= ", {$i->observation}";
     }
 
     // dd($student_info);
-    return $student_info;
+
+            return [
+            'student' => $student,
+            'interaction' => $student_info,
+        ];
+}
+
+
+
+    public static function cleanMenteeData($rawText, $studentName, $semester, $program) {
+
+    $rawText = strtolower($rawText);
+
+
+    $lines = explode('.', $rawText);
+    $uniqueLines = array_unique(array_filter(array_map('trim', $lines)));
+
+
+    $interactions = implode('. ', $uniqueLines) . '.';
+
+
+    $summarySeed = ucfirst($studentName) . ", a student of " . $program . " in semester " . $semester . ", conducted multiple mentee sessions. " . ucfirst($interactions);
+
+    return $summarySeed;
 }
 
 }

@@ -323,11 +323,19 @@ class AdminController extends Controller
             // Log::info('generateReport mentor: ', (array) $validateData['mentee_id']);
 
             // $text = Admin::getMenteeInteractions($validateData['mentee_id']);
-            $text = Admin::getMenteeInteractions(3);
-            // dd($text);
 
-            // $promptedText = "Summarize the following mentee details and interactions comprehensively, including name, degree, semester, and all interaction details (dates, problems, remedies, observations):\n\n" . $text;
-            $apiUrl = 'https://api-inference.huggingface.co/models/facebook/bart-large-cnn';
+            $data = Admin::getMenteeInteractions(3);
+            $interaction = $data['interaction'];
+            $student = $data['student'];
+            $student_name = $student->student_first_name . $student->student_last_name;
+            $semester = $student->current_semester;
+            $program = $student->current_degree;
+
+            $text = Admin::cleanMenteeData($interaction, $student_name, $semester, $program);
+
+            //  $apiUrl = 'https://api-inference.huggingface.co/models/facebook/bart-large-cnn';
+            $apiUrl = 'https://api-inference.huggingface.co/models/google/pegasus-large';
+
             $apiToken = env('HUGGING_FACE_API_TOKEN');
 
 
@@ -340,8 +348,8 @@ class AdminController extends Controller
                 'json' => [
                     'inputs' => $text,
                     'parameters' => [
-                        'min_length' => 5000,
-                        'max_length' => 50000,
+                        'min_length' => 10,
+                        'max_length' => 300,
                         'num_beams' => 5,
                         'no_repeat_ngram_size' => 5,
                     ],
@@ -356,6 +364,8 @@ class AdminController extends Controller
             Log::info("error from the admin Controller function - generateReport: ", (array) $e);
         }
     }
+
+
 
 
 
