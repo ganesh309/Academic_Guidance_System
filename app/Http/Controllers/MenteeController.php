@@ -38,14 +38,17 @@ class MenteeController extends Controller
         ]);
         $mentee = Mentee::where('email', $request->email)->first();
         $password = hash('sha256', $request->password);
-        Log::info("Mentee email: ",(array) $mentee->email," Logged in at ",now() );
+        Log::info("Mentee logged in", [
+            'email' => $mentee->email,
+            'time' => now(),
+        ]);
 
         // if (!$mentee || ($password != $mentee->password)) {
         //     return back()->withErrors(['email' => 'Invalid email or password']);
         // }
 
 
-                if (!$mentee) {
+        if (!$mentee) {
             $title = "Mentee login";
             $error = "Account Does not exist!";
             return redirect()->route('mentee.login', ['error' => $error]);
@@ -74,10 +77,13 @@ class MenteeController extends Controller
     public function logout(Request $request)
     {
 
-        Auth::guard('mentee')->logout();
-        $mentee_email = session('mentee_email');
-        Log::info("Mentee email: ",(array) $mentee_email," Logged out at ",now() );
 
+        $mentee_email = session('mentee_email');
+        Log::info("Mentee logged out", [
+            'email' => $mentee_email,
+            'time' => now(),
+        ]);
+        Auth::guard('mentee')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         $success = "Logout Successful!";
