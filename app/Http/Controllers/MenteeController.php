@@ -41,11 +41,14 @@ class MenteeController extends Controller
         Log::info('Hashed Password: ', (array) $password);
         if (!$mentee || ($password != $mentee->password)) {
             // Log::info($mentee->toArray());
-            return back()->withErrors(['email' => 'Invalid email or password']);
+            $error = 'Invalid email or password';
+            $title = "Mentee Login";
+            return view('mentee.login', compact('title', 'error'));
         }
         Log::info($mentee->toArray());
         if (!$mentee->password_updated) {
             session(['mentee_id' => $mentee->id]);
+
             return redirect()->route('mentee.update-password');
         }
 

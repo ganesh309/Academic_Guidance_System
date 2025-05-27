@@ -40,13 +40,15 @@ class AdminController extends Controller
 
     public function login(Request $request)
     {
+        $password = hash('sha256', $request->password);
+        // Log::info('Password hasced (admin): ',(array) $password);
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
         $admin = Admin::where('email', $request->email)
-            ->where('password', $request->password)
+            ->where('password', $password)
             ->first();
         if ($admin) {
             session(['admin_logged_in' => true]);
