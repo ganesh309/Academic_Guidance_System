@@ -12,7 +12,7 @@
     @endif
 
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/googleapisFont.css') }}">
+    <!-- <link rel="stylesheet" href="{{ asset('css/googleapisFont.css') }}"> -->
     <link rel="stylesheet" href="{{ asset('css/toggleEye.all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/all.min.css') }}">
 
@@ -23,14 +23,13 @@
    
     
     <script>
-        console.log("header lodead");
         let ch1 = "{{isset($error)}}";
-        console.log(ch1);
+        
         let errorMessage = "{{ request('error') ?? '' }}";
         if (ch1) {
             errorMessage = "{{ isset($error) ? $error : null }}";
         }
-        console.log(errorMessage);
+        
 
         let ch2 = "{{isset($success)}}";
 
@@ -38,7 +37,7 @@
         if (ch2) {
             successMessage = "{{ isset($success) ? $success : null }}";
         }
-        console.log(successMessage);
+        
 
         let ch3 = "{{isset($delete_message)}}";
 
@@ -46,6 +45,6 @@
         if (ch3) {
             successMessage = "{{ isset($delete_message) ? $success : null }}";
         }
-        console.log(deleteMessage);
+        
     </script>
 </head>

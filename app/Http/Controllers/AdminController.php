@@ -41,7 +41,7 @@ class AdminController extends Controller
     public function login(Request $request)
     {
         $password = hash('sha256', $request->password);
-        // Log::info('Password hasced (admin): ',(array) $password);
+        Log::info('Password hasced (admin): ', (array) $password);
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -301,43 +301,24 @@ class AdminController extends Controller
     //----------------------------------------------MentorMentee list--------------------------------------//
 
     public function mentorMenteeList()
-{
-    try {
-        $mentors = Mentor::with(['faculty', 'mentees.student'])->get();
-        $mentee_ids_with_interactions = Interaction::pluck('mentee_id')->toArray();
-
-        $title = "Mentor-Mentee List";
-
-        return view('mentor-mentees.index', compact('mentors', 'mentee_ids_with_interactions', 'title'));
-    } catch (\Exception $e) {
-        Log::info("Error from the AdminController function - mentorMenteeList: ", ['error' => $e->getMessage()]);
-        return back()->with('error', 'Something went wrong while loading the mentor-mentee list.');
-    }
-}
-
-    public function generateReport(Request $request)
-
     {
         try {
-            Log::info('in the generateReport admin controller function');
-            Log::info('generateReport mentor: ', (array) $request->input('mentee_id'));
-            // $validateData = $request->validate(
-            //     [
-            //         'mentee_id' => 'required|exists:mentees,id'
-            //     ]
-            // );
-            // Log::info('generateReport mentor: ', (array) $validateData['mentee_id']);
+            $mentors = Mentor::with(['faculty', 'mentees.student'])->get();
+            $mentee_ids_with_interactions = Interaction::pluck('mentee_id')->toArray();
 
-            // $text = Admin::getMenteeInteractions($validateData['mentee_id']);
-<<<<<<< HEAD
-=======
-            $menteeId = $request->input('mentee_id');
-            $text = Admin::getMenteeInteractions($menteeId);
- 
-            // dd($text);
->>>>>>> 965652c4a2ee78f044dab1a129f40b22914ba77f
+            $title = "Mentor-Mentee List";
 
-            $data = Admin::getMenteeInteractions(3);
+            return view('mentor-mentees.index', compact('mentors', 'mentee_ids_with_interactions', 'title'));
+        } catch (\Exception $e) {
+            Log::info("Error from the AdminController function - mentorMenteeList: ", ['error' => $e->getMessage()]);
+            return back()->with('error', 'Something went wrong while loading the mentor-mentee list.');
+        }
+    }
+
+    public function generateReport(Request $request, $mentee_id)
+    {
+        try {
+            $data = Admin::getMenteeInteractions($mentee_id);
             $interaction = $data['interaction'];
             $student = $data['student'];
             $student_name = $student->student_first_name . $student->student_last_name;
@@ -350,8 +331,6 @@ class AdminController extends Controller
             $apiUrl = 'https://api-inference.huggingface.co/models/google/pegasus-large';
 
             $apiToken = env('HUGGING_FACE_API_TOKEN');
-
-
             $client = new Client();
             $response = $client->post($apiUrl, [
                 'headers' => [
@@ -371,16 +350,11 @@ class AdminController extends Controller
 
             $result = json_decode($response->getBody(), true);
             $summary = $result[0]['summary_text'] ?? 'Error: No summary generated';
-
-            dd($summary);
+            return $summary;
         } catch (Exception $e) {
             Log::info("error from the admin Controller function - generateReport: ", (array) $e);
         }
     }
-
-
-
-
 
     public function logout(Request $request)
     {

@@ -373,6 +373,7 @@
             const menteeId = button.getAttribute('data-mentee-id');
             const menteeName = button.getAttribute('data-mentee-name');
 
+
             const loadingIndicator = document.getElementById('loadingIndicator');
             const aiReportContent = document.getElementById('aiReportContent');
             const errorMessage = document.getElementById('errorMessage');

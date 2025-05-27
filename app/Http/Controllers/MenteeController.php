@@ -38,7 +38,7 @@ class MenteeController extends Controller
         ]);
         $mentee = Mentee::where('email', $request->email)->first();
         $password = hash('sha256', $request->password);
-<<<<<<< HEAD
+
         Log::info("Mentee logged in", [
             'email' => $mentee->email,
             'time' => now(),
@@ -53,14 +53,15 @@ class MenteeController extends Controller
             $title = "Mentee login";
             $error = "Account Does not exist!";
             return redirect()->route('mentee.login', ['error' => $error]);
-=======
+        }
+
         Log::info('Hashed Password: ', (array) $password);
         if (!$mentee || ($password != $mentee->password)) {
             // Log::info($mentee->toArray());
             $error = 'Invalid email or password';
             $title = "Mentee Login";
             return view('mentee.login', compact('title', 'error'));
->>>>>>> 965652c4a2ee78f044dab1a129f40b22914ba77f
+
         }
 
         if ($password != $mentee->password) {

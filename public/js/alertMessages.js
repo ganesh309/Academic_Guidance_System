@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
-console.log("From the alertMessage.js");
+// console.log("From the alertMessage.js");
     const url = new URL(window.location.href);
 
     if (successMessage) {
-        console.log(successMessage);
+        // console.log(successMessage);
         url.searchParams.delete("success");
         window.history.replaceState({}, document.title, url.pathname + url.search);
 
@@ -19,7 +19,7 @@ console.log("From the alertMessage.js");
 
 
     if (errorMessage) {
-        console.log(errorMessage);
+        // console.log(errorMessage);
         url.searchParams.delete("error");
         window.history.replaceState({}, document.title, url.pathname + url.search);
 
@@ -34,7 +34,7 @@ console.log("From the alertMessage.js");
     }
 
     if (deleteMessage) {
-        console.log(deleteMessage);
+        // console.log(deleteMessage);
         url.searchParams.delete("delete_message");
         window.history.replaceState({}, document.title, url.pathname + url.search);
 
@@ -76,7 +76,7 @@ function alertMessage(event,$message, studentEmail) {
         cancelButtonText: "Cancel",
         reverseButtons: true
     }).then((result) => {
-        console.log(result);
+        // console.log(result);
         if (result.isConfirmed) {
             document.getElementById(`delete-student-${studentEmail}`).submit(); 
         } else if (result.dismiss === Swal.DismissReason.cancel) {
@@ -110,7 +110,7 @@ function alertMessage(event,$message, studentEmail) {
         cancelButtonText: "Cancel",
         reverseButtons: true
     }).then((result) => {
-        console.log(result);
+        // console.log(result);
         if (result.isConfirmed) {
             document.getElementById(`admin-fees-head-delete-${studentEmail}`).submit(); // here student email = feeHead id
         } else if (result.dismiss === Swal.DismissReason.cancel) {
