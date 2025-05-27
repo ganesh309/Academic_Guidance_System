@@ -7,7 +7,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h3>Mentor Portal</h3>
+            <h3  style="font-size: 22px; letter-spacing: 1px; ">Mentor Dashboard</h3>
         </div>
         <ul class="sidebar-menu">
             <li>

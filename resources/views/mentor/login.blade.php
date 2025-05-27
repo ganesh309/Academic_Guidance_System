@@ -2,7 +2,6 @@
 <html lang="en">
 @include('layouts.header')
 <link rel="stylesheet" href="{{ asset('css/mentor.login.css') }}">
-
 <body>
     <div class="login-container">
         <div class="card">
@@ -16,46 +15,41 @@
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <div class="input-group">
-                            <i class="fas fa-envelope"></i>
                             <input type="email" name="email" class="form-control with-icon" id="email" required placeholder="Enter your email">
+                            <i class="fas fa-envelope"></i>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <div class="input-group toggle-password">
+                        <div class="input-group">
                             <input type="password" name="password" class="form-control with-icon" id="password" required placeholder="Enter your password">
-                            <i class="fa-solid fa-eye-slash"></i>
+                            <i class="fas fa-eye-slash" id="togglePassword"></i>
                         </div>
                     </div>
-
 
                     <button type="submit" class="btn btn-primary w-100">Login</button>
                 </form>
             </div>
             <div class="card-footer">
-                <a href="{{ route('mentor.change.password') }}" class="text-white"> Forget Password?</a>
+                <a href="{{ route('mentor.change.password') }}">Forget Password?</a>
             </div>
         </div>
     </div>
 
-    <!-- Password Toggle Script -->
-
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const toggleBtn = document.querySelector('.toggle-password');
-            const passwordInput = document.getElementById('password');
-            const icon = toggleBtn.querySelector('i');
+            const passwordInput = document.getElementById("password");
+            const toggleIcon = document.getElementById("togglePassword");
 
-            toggleBtn.addEventListener('click', function() {
+            toggleIcon.addEventListener("click", function() {
                 const isPassword = passwordInput.type === "password";
                 passwordInput.type = isPassword ? "text" : "password";
-                icon.classList.toggle("fa-eye-slash", !isPassword);
-                icon.classList.toggle("fa-eye", isPassword);
+                toggleIcon.classList.toggle("fa-eye-slash", !isPassword);
+                toggleIcon.classList.toggle("fa-eye", isPassword);
             });
         });
     </script>
     @include('layouts.footer')
 </body>
-
 </html>

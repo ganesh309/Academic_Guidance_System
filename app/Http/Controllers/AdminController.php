@@ -15,6 +15,7 @@ use App\Models\Degree;
 use App\Models\Mentor;
 use App\Models\Attendance;
 use App\Models\Subject;
+use App\Models\Interaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -39,13 +40,15 @@ class AdminController extends Controller
 
     public function login(Request $request)
     {
+        $password = hash('sha256', $request->password);
+        // Log::info('Password hasced (admin): ',(array) $password);
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
         $admin = Admin::where('email', $request->email)
-            ->where('password', $request->password)
+            ->where('password', $password)
             ->first();
         if ($admin) {
             session(['admin_logged_in' => true]);
@@ -298,16 +301,19 @@ class AdminController extends Controller
     //----------------------------------------------MentorMentee list--------------------------------------//
 
     public function mentorMenteeList()
-    {
-        try {
-            $mentors = Mentor::with(['faculty', 'mentees.student'])->get();
+{
+    try {
+        $mentors = Mentor::with(['faculty', 'mentees.student'])->get();
+        $mentee_ids_with_interactions = Interaction::pluck('mentee_id')->toArray();
 
-            $title = "Mentor-Mentee List";
-            return view('mentor-mentees.index', compact('mentors', 'title'));
-        } catch (Exception $e) {
-            Log::info("error from the admin Controller function - mentorMenteeList: ", (array) $e);
-        }
+        $title = "Mentor-Mentee List";
+
+        return view('mentor-mentees.index', compact('mentors', 'mentee_ids_with_interactions', 'title'));
+    } catch (\Exception $e) {
+        Log::info("Error from the AdminController function - mentorMenteeList: ", ['error' => $e->getMessage()]);
+        return back()->with('error', 'Something went wrong while loading the mentor-mentee list.');
     }
+}
 
     public function generateReport(Request $request)
 
@@ -323,6 +329,13 @@ class AdminController extends Controller
             // Log::info('generateReport mentor: ', (array) $validateData['mentee_id']);
 
             // $text = Admin::getMenteeInteractions($validateData['mentee_id']);
+<<<<<<< HEAD
+=======
+            $menteeId = $request->input('mentee_id');
+            $text = Admin::getMenteeInteractions($menteeId);
+ 
+            // dd($text);
+>>>>>>> 965652c4a2ee78f044dab1a129f40b22914ba77f
 
             $data = Admin::getMenteeInteractions(3);
             $interaction = $data['interaction'];
