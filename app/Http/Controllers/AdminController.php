@@ -126,16 +126,9 @@ class AdminController extends Controller
         }
     }
 
-
-
-
-    /**
-     * Return attendance chart data and student details for the modal.
-     */
     public function attendanceChart(Student $student)
     {
         try {
-            // Fetch monthly attendance (count of present days)
             $monthlyAttendance = Attendance::selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total')
                 ->where('student_id', $student->id)
                 ->where('attendance', true)
@@ -143,7 +136,6 @@ class AdminController extends Controller
                 ->orderBy('month')
                 ->get();
 
-            // Fetch total classes per month (all records, regardless of attendance)
             $monthlyTotalClasses = Attendance::selectRaw('DATE_FORMAT(date, "%Y-%m") as month, COUNT(*) as total_classes')
                 ->where('student_id', $student->id)
                 ->groupBy('month')
@@ -157,8 +149,6 @@ class AdminController extends Controller
             foreach ($monthlyAttendance as $record) {
                 $monthName = Carbon::createFromFormat('Y-m', $record->month)->format('F Y');
                 $totalClasses = $monthlyTotalClasses->get($record->month)->total_classes ?? 0;
-
-                // Fetch subject-wise attendance for this month
                 $subjectAttendance = Attendance::select('subjects.name', DB::raw('COUNT(*) as total'))
                     ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
                     ->where('attendances.student_id', $student->id)
@@ -168,7 +158,6 @@ class AdminController extends Controller
                     ->pluck('total', 'subjects.name')
                     ->toArray();
 
-                // Fetch total classes per subject for this month
                 $subjectTotalClasses = Attendance::select('subjects.name', DB::raw('COUNT(*) as total_classes'))
                     ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
                     ->where('attendances.student_id', $student->id)
@@ -200,12 +189,10 @@ class AdminController extends Controller
                 ];
             }
 
-            // Find the image file
             $imagePath = public_path('studentImages/' . $student->uid . '.*');
             $imageFile = glob($imagePath)[0] ?? null;
             $imageFilename = $imageFile ? basename($imageFile) : null;
 
-            // Prepare student details
             $studentData = [
                 'uid' => $student->uid,
                 'image_filename' => $imageFilename,
@@ -229,7 +216,7 @@ class AdminController extends Controller
     {
         try {
             $students = Student::with(['degree', 'school', 'mentee'])
-                ->where('sgpa', '<', 6)
+                ->where('sgpa', '<', 5)
                 ->get();
 
             $faculties = Faculty::all();
