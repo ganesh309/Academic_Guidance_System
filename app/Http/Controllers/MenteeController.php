@@ -131,7 +131,7 @@ class MenteeController extends Controller
         session()->forget('mentee_id');
         $title = "Mentor Login";
         $success = 'Password updated successfully. Please log in again.';
-        return redirect()->route('mentee.login', ['title' => $title, 'error' => $success]);
+        return redirect()->route('mentee.login', ['title' => $title, 'success' => $success]);
     }
 
 
