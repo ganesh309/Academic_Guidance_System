@@ -21,7 +21,7 @@ Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('adm
 Route::get('/students-list', [AdminController::class, 'studentsList'])->name('students.index');
 Route::get('/students/{student}/attendance-chart', [AdminController::class, 'attendanceChart']);
 // Route::get('/generate-ai-report/{menteeId}', [AIReportController::class, 'generate'])->name('generate.report');
-Route::post('/generate-report', [AdminController::class, 'generateReport'])->name('admin.generate-report');
+Route::get('/generate-report/{mentee_id}', [AdminController::class, 'generateReport'])->name('admin.generate-report');
 
 
 

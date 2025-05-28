@@ -38,14 +38,38 @@ class MenteeController extends Controller
         ]);
         $mentee = Mentee::where('email', $request->email)->first();
         $password = hash('sha256', $request->password);
+
+        Log::info("Mentee logged in", [
+            'email' => $mentee->email,
+            'time' => now(),
+        ]);
+
+        // if (!$mentee || ($password != $mentee->password)) {
+        //     return back()->withErrors(['email' => 'Invalid email or password']);
+        // }
+
+
+        if (!$mentee) {
+            $title = "Mentee login";
+            $error = "Account Does not exist!";
+            return redirect()->route('mentee.login', ['error' => $error]);
+        }
+
         Log::info('Hashed Password: ', (array) $password);
         if (!$mentee || ($password != $mentee->password)) {
             // Log::info($mentee->toArray());
             $error = 'Invalid email or password';
             $title = "Mentee Login";
             return view('mentee.login', compact('title', 'error'));
+
         }
-        Log::info($mentee->toArray());
+
+        if ($password != $mentee->password) {
+            $title = "Mentee login";
+            $error = "Wrong Password!";
+            return redirect()->route('mentee.login', ['error' => $error]);
+        }
+
         if (!$mentee->password_updated) {
             session(['mentee_id' => $mentee->id]);
 
@@ -63,8 +87,14 @@ class MenteeController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::guard('mentee')->logout();
 
+
+        $mentee_email = session('mentee_email');
+        Log::info("Mentee logged out", [
+            'email' => $mentee_email,
+            'time' => now(),
+        ]);
+        Auth::guard('mentee')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         $success = "Logout Successful!";
