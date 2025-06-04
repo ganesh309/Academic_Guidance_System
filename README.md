@@ -68,6 +68,7 @@ The Academic Guidance System is a Laravel-based web application designed to faci
 
 3.Configure .env
 
+    Check the My Sql file
     Update your database credentials and email settings in .env.
 
 5.Run Migrations
