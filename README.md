@@ -1,67 +1,150 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+🎓 Academic Guidance System (Mentor-Mentee)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The Academic Guidance System is a Laravel-based web application designed to facilitate seamless mentorship between faculty members and students. It helps institutions assign mentors to students—especially those with academic challenges—and provides a structured way to monitor student progress, facilitate communication, and maintain mentorship records.
 
-## About Laravel
+🚀 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+    🔐 Admin Authentication (Login with Email & Password)
+    🌍 Dynamic Address Selection (Country, State, District)
+    📉 Data Visualization to display the students attendances
+    📉 Automatic Mentee Assignment for students with SGPA below threshold
+    🧑‍🏫 Mentor Assignment & Reassignment with duplication checks
+    📋 Mentor & Mentee Lists for easy monitoring
+    📤 Secure Storage of mentor and mentee login credentials (SHA-256)
+    📬 Email-based password reset with OTP verification
+    🔍 Advanced Search & Filtering for student, mentor, and mentee records
+    📊 Dashboard with Student & Mentor Statistics
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+🛠️ Built With
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+    Framework: Laravel 9
+    Frontend: Blade, Html, CSS, JavaScript, Bootstrap, jQuery, SweetAlert
+    Backend: PHP
+    Database: MySQL
+    Security: SHA-256 hashing for login credentials
 
-## Learning Laravel
+📂 Project Structure Overview
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+    app/
+    ├── Http/
+    │   ├── Controllers/
+    │   │   └── AdminController.php
+    │   │   └── MentorController.php
+    │   │   └── StudentController.php
+    │
+    resources/
+    ├── views/
+    │   ├── admin/
+    │   │   ├── dashboard.blade.php
+    │   │   ├── login.blade.php
+    │   ├── emails/
+    │   │   ├── All email templates blade files
+    │   ├── students/
+    │   │   ├── index.blade.php
+    │   ├── mentor/
+    │   │   ├── All mentors blade file
+    │   ├── mentees/
+    │   │   ├── All mentees blade file
+    │
+    routes/
+    └── web.php
+    
+    database/
+    ├── migrations/
+    ├── seeders/
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+🧪 Installation & Setup
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1.Clone the Repository
 
-## Laravel Sponsors
+    git clone https://github.com/ganesh309/Academic_Guidance_System.git
+    cd Academic_Guidance_System
+    
+2.Install Dependencies & Environment Setup
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+    composer install
+    cp .env.example .env
+    php artisan key:generate
 
-### Premium Partners
+3.Configure .env
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+    Update your database credentials and email settings in .env.
 
-## Contributing
+5.Run Migrations
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    php artisan migrate
 
-## Code of Conduct
+6.Run the Application
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    php artisan serve
 
-## Security Vulnerabilities
+👨‍💻 Default Admin Credentials
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    Email: admin@gmail.com
+    Password: Admin@123
+    
+📸 Screenshots
 
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# Academic-Guidance-System
+<img width="952" alt="Screenshot 2025-06-03 150638" src="https://github.com/user-attachments/assets/10a65bef-78bf-40a0-a77a-cdc71edbf735" />
+
+<img width="958" alt="Screenshot 2025-06-03 150718" src="https://github.com/user-attachments/assets/726c20d7-8cea-4c1a-a21b-a0b0af65d547" />
+
+<img width="949" alt="Screenshot 2025-06-03 150750" src="https://github.com/user-attachments/assets/579d0f33-ffb6-4f20-aaf0-276a91bbe826" />
+
+<img width="960" alt="Screenshot 2025-06-03 150813" src="https://github.com/user-attachments/assets/a87f78df-2a89-49dd-9084-41a535a809b5" />
+
+<img width="960" alt="Screenshot 2025-06-03 150838" src="https://github.com/user-attachments/assets/f417d3a4-a071-48dc-ac7b-20918ec162a5" />
+
+<img width="960" alt="Screenshot 2025-06-03 150911" src="https://github.com/user-attachments/assets/49ced766-91e4-41e9-bead-7de892a07073" />
+
+<img width="959" alt="Screenshot 2025-06-03 150936" src="https://github.com/user-attachments/assets/73e93b29-19bc-4d0a-afe2-04d440fb026e" />
+
+<img width="960" alt="Screenshot 2025-06-03 151018" src="https://github.com/user-attachments/assets/fb744409-29ad-4ca9-9b41-e553240e5297" />
+
+<img width="960" alt="Screenshot 2025-06-03 151042" src="https://github.com/user-attachments/assets/d9bc18c0-43c1-4919-88c7-1bbe682d113d" />
+
+<img width="959" alt="Screenshot 2025-06-03 151132" src="https://github.com/user-attachments/assets/dcc7579b-376b-407e-993e-cc95add5cb49" />
+
+<img width="949" alt="Screenshot 2025-06-03 151153" src="https://github.com/user-attachments/assets/ba28d3e1-4104-4874-b78c-fbbc306e2627" />
+
+<img width="957" alt="Screenshot 2025-06-03 151212" src="https://github.com/user-attachments/assets/ffc0b8ff-674a-4932-99b4-4d3c2300a9a5" />
+
+<img width="959" alt="Screenshot 2025-06-03 151227" src="https://github.com/user-attachments/assets/29449ad5-4080-4cd1-9238-16a050a20be4" />
+
+<img width="960" alt="Screenshot 2025-06-03 151258" src="https://github.com/user-attachments/assets/2df1d299-1310-4a7e-9856-48e1da5b3924" />
+
+<img width="957" alt="Screenshot 2025-06-03 151324" src="https://github.com/user-attachments/assets/56bff080-1ff6-4f9e-9470-f05f55b147ba" />
+
+<img width="948" alt="Screenshot 2025-06-03 151356" src="https://github.com/user-attachments/assets/4d9876f7-515f-409e-a2ec-4211bf0129c3" />
+
+<img width="953" alt="Screenshot 2025-06-03 151424" src="https://github.com/user-attachments/assets/2dd464dc-7d30-47c2-a270-c24d4a7c1bb6" />
+
+<img width="945" alt="Screenshot 2025-06-03 151529" src="https://github.com/user-attachments/assets/fd7211c2-9ccb-4904-b6dc-98fe37f0c449" />
+
+<img width="948" alt="Screenshot 2025-06-03 151544" src="https://github.com/user-attachments/assets/ac36182b-0138-4a55-b247-ffa1c15dfbe0" />
+
+<img width="950" alt="Screenshot 2025-06-03 151708" src="https://github.com/user-attachments/assets/a0ba8fea-41b5-42e5-8713-6bc27d9d459d" />
+
+
+
+🤝 Contributing
+
+This project was developed collaboratively by our team as part of an academic initiative. Special thanks to all team members for their valuable contributions:
+
+👥 Project Contributors
+
+    [Pratik Saphui] – Frontend Developer / UI Designer
+    [Anupam Bardhan] – Frontend Developer / Documentation
+    [Ganesh Ghorai] – Backend Developer/Database Design / Data Handling
+    [Sankar Rajak] – Backend Developer/Database Design / Data Handling
+
+We collaborated on planning, development, testing, and documentation phases to bring this project to completion.
+If you are interested in contributing to the future development of this system, feel free to:
+
+    Fork the repository
+    Create a feature branch
+    Submit a pull request
+
+We welcome constructive feedback, suggestions, and improvements!
+
