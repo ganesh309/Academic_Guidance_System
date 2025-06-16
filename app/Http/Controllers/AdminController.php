@@ -148,36 +148,44 @@ class AdminController extends Controller
 
             foreach ($monthlyAttendance as $record) {
                 $monthName = Carbon::createFromFormat('Y-m', $record->month)->format('F Y');
-                $totalClasses = $monthlyTotalClasses->get($record->month)->total_classes ?? 0;
-                $subjectAttendance = Attendance::select('subjects.name', DB::raw('COUNT(*) as total'))
+
+                // Get subjects where the student was present
+                $subjectAttendance = Attendance::select('subjects.name', DB::raw('COUNT(*) as present_count'))
                     ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
                     ->where('attendances.student_id', $student->id)
-                    ->where('attendances.attendance', true)
+                    ->where('attendances.attendance', true) // present only
                     ->whereRaw('DATE_FORMAT(attendances.date, "%Y-%m") = ?', [$record->month])
                     ->groupBy('subjects.name')
-                    ->pluck('total', 'subjects.name')
+                    ->pluck('present_count', 'subjects.name')
                     ->toArray();
 
+                // Now get total classes (present + absent) only for subjects where student was present
                 $subjectTotalClasses = Attendance::select('subjects.name', DB::raw('COUNT(*) as total_classes'))
                     ->join('subjects', 'attendances.subject_id', '=', 'subjects.id')
                     ->where('attendances.student_id', $student->id)
                     ->whereRaw('DATE_FORMAT(attendances.date, "%Y-%m") = ?', [$record->month])
+                    ->whereIn('subjects.name', array_keys($subjectAttendance))
                     ->groupBy('subjects.name')
                     ->pluck('total_classes', 'subjects.name')
                     ->toArray();
 
                 $drillData = [];
-                foreach ($subjectAttendance as $subject => $total) {
+                foreach ($subjectAttendance as $subject => $presentCount) {
                     $drillData[] = [
                         'subject' => $subject,
-                        'attendance' => $total,
+                        'attendance' => $presentCount,
                         'total_classes' => $subjectTotalClasses[$subject] ?? 0
                     ];
                 }
 
+                // Get total classes overall in the month
+                $totalClasses = Attendance::where('student_id', $student->id)
+                    ->whereRaw('DATE_FORMAT(date, "%Y-%m") = ?', [$record->month])
+                    ->count();
+
                 $monthly[] = [
                     'name' => $monthName,
-                    'y' => $record->total,
+                    'y' => $record->total, // total present in the month
                     'total_classes' => $totalClasses,
                     'drilldown' => $record->month
                 ];
@@ -188,6 +196,7 @@ class AdminController extends Controller
                     'data' => $drillData
                 ];
             }
+
 
             $imagePath = public_path('studentImages/' . $student->uid . '.*');
             $imageFile = glob($imagePath)[0] ?? null;

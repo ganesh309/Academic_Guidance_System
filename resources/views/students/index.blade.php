@@ -969,16 +969,15 @@
                                 drilldown: item.drilldown
                             }));
 
-                            // Prepare drilldown data for subjects
                             const drilldownSeries = data.drilldown.map(drill => ({
                                 id: drill.id,
                                 name: drill.name,
                                 data: drill.data.map(item => [
                                     item.subject,
-                                    item.total_classes,
-                                    item.attendance
+                                    item.attendance // use attendance as the y-value
                                 ])
                             }));
+
 
                             // Create main attendance chart
                             chart = Highcharts.chart('attendanceChart', {
