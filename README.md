@@ -1,4 +1,4 @@
-🎓 Academic Guidance System (Mentor-Mentee)
+🎓 Academic Guidance System (MentorMate)
 
 The Academic Guidance System is a Laravel-based web application designed to facilitate seamless mentorship between faculty members and students. It helps institutions assign mentors to students—especially those with academic challenges—and provides a structured way to monitor student progress, facilitate communication, and maintain mentorship records.
 
